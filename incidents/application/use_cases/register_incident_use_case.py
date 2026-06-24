@@ -1,0 +1,104 @@
+"""Register Incident Use Case - Primary workflow for incident registration."""
+
+from incidents.domain.services import IncidentService, VehicleValidatorService
+from incidents.domain.models import Incident
+from incidents.domain.exceptions import (
+    DomainException,
+    VehicleNotRegisteredException,
+)
+from incidents.application.dtos import IncidentDTO, IncidentResponseDTO
+from incidents.application.exceptions import VehicleValidationError
+
+
+class RegisterIncidentUseCase:
+    """
+    Use Case: Register a new incident.
+    
+    Workflow (Workflow 1 from SAD):
+    1. API Gateway receives request and authenticates user
+    2. Validate vehicle plate exists (via VehicleClientPort)
+    3. Create and persist incident
+    4. Publish incident_registered event
+    5. Return HTTP 201 with incident data
+    
+    SAGA coordination:
+    - Vehicles marks vehicle unavailable (if grave)
+    - Mantenimiento schedules maintenance (if grave + mecanico)
+    - Asignaciones handles reassignment or delay notification
+    
+    This is the PRIMARY TRANSACTIONAL FLOW exercising all architectural layers.
+    """
+
+    def __init__(
+        self,
+        incident_service: IncidentService,
+        vehicle_validator: VehicleValidatorService,
+    ):
+        """
+        Initialize use case with domain services.
+        
+        Args:
+            incident_service: Domain service for incident operations
+            vehicle_validator: Domain service for vehicle validation
+        """
+        self.incident_service = incident_service
+        self.vehicle_validator = vehicle_validator
+
+    def execute(self, dto: IncidentDTO) -> IncidentResponseDTO:
+        """
+        Execute incident registration workflow.
+        
+        Args:
+            dto: IncidentDTO with incident data from REST request
+            
+        Returns:
+            IncidentResponseDTO with registered incident data
+            
+        Raises:
+            VehicleValidationError: If plate is not registered
+            DomainException: If incident data is invalid
+        """
+        # Step 1: Validate vehicle exists (Circuit Breaker protected)
+        try:
+            self.vehicle_validator.validate_vehicle_exists(dto.placa_vehiculo)
+        except VehicleNotRegisteredException as e:
+            raise VehicleValidationError(str(e))
+
+        # Step 2: Register incident (domain logic, event publishing)
+        try:
+            incident = self.incident_service.register_incident(
+                id_conductor=dto.id_conductor,
+                placa_vehiculo=dto.placa_vehiculo,
+                tipo_incidente=dto.tipo_incidente,
+                gravedad=dto.gravedad,
+                descripcion=dto.descripcion,
+                fecha_hora=dto.fecha_hora,
+            )
+        except DomainException as e:
+            raise e
+
+        # Step 3: Convert to response DTO
+        return self._incident_to_response_dto(incident)
+
+    @staticmethod
+    def _incident_to_response_dto(incident: Incident) -> IncidentResponseDTO:
+        """
+        Convert domain Incident to response DTO.
+        
+        Args:
+            incident: Domain incident model
+            
+        Returns:
+            IncidentResponseDTO
+        """
+        return IncidentResponseDTO(
+            id=str(incident.id),
+            fecha_hora=incident.fecha_hora.isoformat(),
+            id_conductor=incident.id_conductor,
+            placa_vehiculo=incident.get_plate_str(),
+            tipo_incidente=incident.tipo_incidente.value,
+            gravedad=incident.gravedad.value,
+            descripcion=incident.descripcion,
+            created_at=incident.created_at.isoformat(),
+            updated_at=incident.updated_at.isoformat(),
+        )

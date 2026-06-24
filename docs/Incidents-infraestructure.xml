@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Mobile Safari/537.36" pages="2">
+  <diagram name="Página-1" id="zfYB34iMNKpcAs-0N4jK">
+    <mxGraphModel dx="2357" dy="1202" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="FOTbMycvNof1Uibledx0-2" parent="1" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#003366);" value="" vertex="1">
+          <mxGeometry height="583" width="585" x="74" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-1" parent="1" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#003366);" value="" vertex="1">
+          <mxGeometry height="236" width="518" x="82" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="Jyls0R93GdLa-R0yuH9Y-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Capa de Seguridad&lt;/b&gt;" vertex="1">
+          <mxGeometry height="20" width="120" x="96" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="jXXVDRrLIFnwBI4eHLJo-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Capa Logica&lt;/b&gt;" vertex="1">
+          <mxGeometry height="20" width="130" x="91" y="502" as="geometry" />
+        </mxCell>
+        <mxCell id="L0CYr7nkhZRYOARn-a8W-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=11;" value="&amp;lt; Request/Response &amp;gt;" vertex="1">
+          <mxGeometry height="13" width="131" x="354" y="429" as="geometry" />
+        </mxCell>
+        <mxCell id="GQt8U-1QnMQfv-PyReMY-1" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#d0cee2;strokeColor=#56517e;fillStyle=solid;direction=west;gradientDirection=north;shadow=1;size=20;autosizeText=1;fontSize=10;align=left;" value="&lt;p&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;&lt;b&gt;Estilo arquitectural:&lt;/b&gt;&lt;br&gt;&lt;/font&gt;&lt;font face=&quot;Helvetica&quot;&gt;&amp;nbsp;Hexagonal&lt;/font&gt;&lt;/font&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Patron arquitectural:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;- Microbackend&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;- Microservicios&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Patrones de diseño:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;- Circuit breaker&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 14px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;- API Gateway&lt;/span&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="225" width="156" x="635" y="174" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-4" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#001933);" value="" vertex="1">
+          <mxGeometry height="473" width="484.5" x="124.25" y="539" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-5" parent="FOTbMycvNof1Uibledx0-4" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AAQ4dzxjYmEB4jZOQ3XY-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;Contenedor Docker Incidentes&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="256" x="134" y="552" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-6" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="" vertex="1">
+          <mxGeometry height="384" width="404" x="168" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-7" parent="FOTbMycvNof1Uibledx0-6" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L0CYr7nkhZRYOARn-a8W-6" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;rounded=0;" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&lt;div&gt;&amp;nbsp;Servicio de Incidentes&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="296" x="215" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-8" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&lt;div&gt;&lt;b&gt;API&lt;/b&gt;&lt;/div&gt;&lt;div&gt;(Endpoints REST, DTOs, Validación de Requests)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="87" width="310" x="211.5" y="658" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-9" parent="FOTbMycvNof1Uibledx0-8" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-10" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;Domain&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;(Modelos, Servicios de Dominio, Interfaces)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="90" width="310.5" x="211" y="764" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-11" parent="FOTbMycvNof1Uibledx0-10" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-12" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;Infraestructure&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Postgres Repository&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Logger&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="78" width="311.5" x="211.5" y="873" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-13" parent="FOTbMycvNof1Uibledx0-12" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-14" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#001933);" value="" vertex="1">
+          <mxGeometry height="147.5" width="403.5" x="139.25" y="222" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-15" parent="FOTbMycvNof1Uibledx0-14" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yHkRzzkD0jvrMKV13OIY-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;Contenedor Docker&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="215" x="139.25" y="227" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-16" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; text-align: start;&quot;&gt;API Gateway&lt;/b&gt;&lt;div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; text-align: start;&quot;&gt;(JWT&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;Validation, &lt;/span&gt;&lt;span style=&quot;font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; text-align: start; white-space: nowrap; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Rate limiting&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;, CORS, &lt;/span&gt;&lt;span style=&quot;font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; text-align: start; white-space: nowrap; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Routing Path&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="74" width="312.5" x="180" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-17" parent="FOTbMycvNof1Uibledx0-16" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-18" parent="1" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#003366);" value="" vertex="1">
+          <mxGeometry height="243" width="526" x="100" y="1126" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-19" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#001933);" value="" vertex="1">
+          <mxGeometry height="150" width="405" x="164" y="1194" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-20" parent="FOTbMycvNof1Uibledx0-19" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Diu4v5pG2n_jY_okKJg8-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Capa de Infraestuctura&lt;/b&gt;" vertex="1">
+          <mxGeometry height="20" width="142" x="114" y="1157" as="geometry" />
+        </mxCell>
+        <mxCell id="Diu4v5pG2n_jY_okKJg8-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&amp;nbsp;&amp;nbsp;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;Contenedor Docker Incidentes&lt;/b&gt;" vertex="1">
+          <mxGeometry height="31.5" width="283" x="164" y="1201" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-21" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=light-dark(#FFFFFF,#000000);" value="&amp;lt;&amp;lt; component &amp;gt;&amp;gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent; font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;&lt;b&gt;Contenedor &lt;/b&gt;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); background-color: transparent; font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;&lt;b&gt;Postgres&amp;nbsp;&lt;/b&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-family: &amp;quot;Anthropic Sans&amp;quot;, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, sans-serif; font-size: 11px; text-align: start;&quot;&gt;(Postgres SQL 18)&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="76" width="303.5" x="214.5" y="1243" as="geometry" />
+        </mxCell>
+        <mxCell id="FOTbMycvNof1Uibledx0-22" parent="FOTbMycvNof1Uibledx0-21" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Diu4v5pG2n_jY_okKJg8-15" edge="1" parent="1" source="FOTbMycvNof1Uibledx0-19" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;startArrow=classic;startFill=1;endArrow=none;endFill=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="FOTbMycvNof1Uibledx0-4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="345" y="1072" as="sourcePoint" />
+            <mxPoint x="344" y="948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Diu4v5pG2n_jY_okKJg8-16" connectable="0" parent="Diu4v5pG2n_jY_okKJg8-15" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&amp;lt;&amp;lt;use&amp;gt;&amp;gt;" vertex="1">
+          <mxGeometry relative="1" x="0.2352" y="2" as="geometry">
+            <mxPoint x="38" y="8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-DJj_9VS2gfyhXGDLHV7-7" edge="1" parent="1" source="FOTbMycvNof1Uibledx0-4" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.47;exitY=0.004;exitDx=0;exitDy=0;fontSize=12;startSize=8;endSize=8;dashed=1;entryX=0.548;entryY=1.01;entryDx=0;entryDy=0;exitPerimeter=0;entryPerimeter=0;" target="FOTbMycvNof1Uibledx0-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="351.25" y="358.9999999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="KRbqFlrJ-lH0HS-C3z8o" name="Página-2">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

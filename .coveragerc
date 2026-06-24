@@ -1,0 +1,29 @@
+[run]
+branch = True
+omit =
+    */tests/*
+    */test_*.py
+    */migrations/*
+    */__pycache__/*
+    setup.py
+    incidents/settings/*
+    incidents/infrastructure/config/*
+    incidents/urls.py
+    incidents/infrastructure/api/urls.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abstract.abstractmethod
+
+precision = 2
+show_missing = True
+
+[html]
+directory = htmlcov

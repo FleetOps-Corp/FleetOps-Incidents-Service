@@ -1,0 +1,33 @@
+# Python project dependencies
+
+# Django & REST Framework
+Django==4.2.13
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+
+# Database
+psycopg2-binary==2.9.9
+
+# Message Broker
+pika==1.3.2
+
+# HTTP Client with Circuit Breaker
+pybreaker==1.0.1
+requests==2.32.3
+
+# Testing
+pytest==7.4.4
+pytest-django==4.7.0
+pytest-mock==3.12.0
+pytest-cov==4.1.0
+coverage==7.4.1
+
+# Code Quality
+black==24.1.1
+flake8==7.0.0
+isort==5.13.2
+
+# Utilities
+python-dotenv==1.0.0
+pytz==2024.1
