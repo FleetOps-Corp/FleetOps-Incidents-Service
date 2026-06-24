@@ -45,6 +45,11 @@ htmlcov/
 .env.local
 .env.*.local
 
+# Virtual Environment
+.venv/
+venv/
+env/
+
 # Docker
 docker-compose.override.yml
 
@@ -59,3 +64,9 @@ build/
 
 # Git
 .git/
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
