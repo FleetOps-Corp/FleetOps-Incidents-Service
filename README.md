@@ -132,6 +132,18 @@ python manage.py runserver 0.0.0.0:8000 --settings incidents.settings.developmen
 
 ## Running Tests
 
+### Mypy check
+
+```bash
+mypy .
+```
+
+### Ruff check
+
+```bash
+ruff check .
+```
+
 ### Unit Tests (100% Coverage Target)
 
 ```bash

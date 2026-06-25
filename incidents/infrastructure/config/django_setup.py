@@ -20,8 +20,7 @@ class IncidentsConfig(AppConfig):
         from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
         from incidents.domain.services import IncidentService, VehicleValidatorService
         from incidents.domain.ports import VehicleClientPort
-        from django.conf import settings
-        from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import VehicleClientWithCircuitBreaker
+        # from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import VehicleClientWithCircuitBreaker
         
         class DummyVehicleClient(VehicleClientPort):
             def validate_plate_exists(self, placa: str) -> bool:
