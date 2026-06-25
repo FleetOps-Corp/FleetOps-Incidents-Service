@@ -76,6 +76,9 @@ def create_incident(request: Request) -> Response:
         )
 
         # Execute use case
+        if register_incident_uc is None:
+            raise RuntimeError("Use case not configured")
+        
         response_dto = register_incident_uc.execute(incident_dto)
 
         # Serialize response
@@ -158,6 +161,9 @@ def query_incidents(request: Request) -> Response:
             fecha_hasta=serializer.validated_data.get("fecha_hasta"),
         )
         # Execute use case
+        if query_incidents_uc is None:
+            raise RuntimeError("Use case not configured")
+        
         response_dtos = query_incidents_uc.execute(filters_dto)
 
         # Serialize responses
@@ -197,6 +203,8 @@ def get_incident(request: Request, incident_id: str) -> Response:
         Response: HTTP 200 with incident data or 404
     """
     try:
+        if query_incidents_uc is None:
+            raise RuntimeError("Use case not configured")
         response_dto = query_incidents_uc.execute_by_id(incident_id)
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
         return Response(response_serializer.data, status=status.HTTP_200_OK)

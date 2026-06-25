@@ -28,6 +28,8 @@ class DjangoIncidentRepository(IncidentRepository):
         Returns:
             Incident: The persisted incident (with ID if newly created)
         """
+        assert incident.descripcion is not None
+        
         orm_incident = IncidentORM(
             id=incident.id,
             fecha_hora=incident.fecha_hora,

@@ -121,9 +121,9 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         elif response.status_code == 404:
             # Plate not found
             return False
-        else:
-            # Other errors (500, etc.) should trigger circuit breaker
-            response.raise_for_status()
+        
+        response.raise_for_status()
+        raise RuntimeError("Unreachable")
 
     @staticmethod
     def _breaker_listener():

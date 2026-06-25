@@ -142,6 +142,9 @@ class IncidentService:
         Args:
             incident: The incident to publish
         """
+        
+        assert incident.descripcion is not None
+        
         event = IncidentRegisteredEvent(
             incident_id=incident.id,
             id_conductor=incident.id_conductor,
