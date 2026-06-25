@@ -3,7 +3,6 @@
 import json
 import pika
 from typing import Dict, Any
-from datetime import datetime
 
 from incidents.domain.ports import MessageBrokerPort
 from incidents.infrastructure.adapters.logging import logger_factory

@@ -1,8 +1,6 @@
 """Query Incidents Use Case - Retrieval and filtering of incidents."""
 
 from typing import List
-from datetime import datetime
-from uuid import UUID
 
 from incidents.domain.services import IncidentService
 from incidents.domain.models import Incident

@@ -1,9 +1,6 @@
 """Unit tests for VehicleValidatorService."""
 
 import pytest
-from unittest.mock import Mock
-
-from incidents.domain.services import VehicleValidatorService
 from incidents.domain.exceptions import VehicleNotRegisteredException
 
 

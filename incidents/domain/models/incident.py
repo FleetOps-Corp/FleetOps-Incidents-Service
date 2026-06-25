@@ -3,17 +3,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from incidents.domain.models.value_objects import (
     IncidentType,
     IncidentSeverity,
     PlateNumber,
-)
-from incidents.domain.exceptions import (
-    InvalidIncidentTypeException,
-    InvalidIncidentSeverityException,
-    InvalidPlateNumberException,
 )
 
 

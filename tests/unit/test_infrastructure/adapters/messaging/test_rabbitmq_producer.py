@@ -1,8 +1,6 @@
 """Unit tests for RabbitMQ producer adapter."""
 
 import pytest
-import json
-from unittest.mock import Mock, patch, MagicMock
 
 from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
 

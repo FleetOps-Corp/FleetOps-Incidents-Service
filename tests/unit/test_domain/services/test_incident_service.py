@@ -2,10 +2,7 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, call
-
 from incidents.domain.models import Incident
-from incidents.domain.services import IncidentService
 from incidents.domain.exceptions import (
     InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
@@ -143,7 +140,7 @@ class TestIncidentServiceQuery:
         incidents = [Incident.create("c1", "ABC", "HUMANO", "GRAVE", "El conductor se enveneno", datetime(2026, 6, 17, 15, 58, 0))]
         mock_incident_repository.find_by_filters.return_value = incidents
 
-        result = incident_service.query_incidents_by_filters(tipo_incidente="HUMANO")
+        incident_service.query_incidents_by_filters(tipo_incidente="HUMANO")
 
         mock_incident_repository.find_by_filters.assert_called_once_with(
             tipo_incidente="HUMANO",

@@ -4,7 +4,6 @@ import pytest
 from uuid import uuid4
 from datetime import datetime
 
-from incidents.application.use_cases import QueryIncidentsUseCase
 from incidents.application.dtos import QueryFiltersDTO
 from incidents.application.exceptions import IncidentNotFoundApplicationError
 from incidents.domain.models import Incident

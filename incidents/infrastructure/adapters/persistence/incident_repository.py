@@ -1,7 +1,6 @@
 """Incident Repository - Hexagonal Driven Adapter implementing IncidentRepository port."""
 
 from typing import List, Optional
-from uuid import UUID
 from datetime import datetime
 
 from incidents.domain.models import Incident, IncidentType, IncidentSeverity, PlateNumber
