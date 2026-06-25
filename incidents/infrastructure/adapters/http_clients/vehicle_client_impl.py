@@ -84,7 +84,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             Dictionary with vehicle details or None
         """
         try:
-            url = f"{self.vehicles_api_url}/api/vehicles/{placa}"
+            url = f"{self.vehicles_api_url}/vehiculos/placa/{placa}"
             response = requests.get(url, timeout=self.timeout_seconds)
             if response.status_code == 200:
                 return response.json()
@@ -107,7 +107,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             Exception: On HTTP error
         """
         # Construct endpoint
-        url = f"{self.vehicles_api_url}/api/vehicles/validate/{placa}"
+        url = f"{self.vehicles_api_url}/vehiculos/placa/{placa}"
 
         # Make request
         response = requests.get(url, timeout=self.timeout_seconds)
