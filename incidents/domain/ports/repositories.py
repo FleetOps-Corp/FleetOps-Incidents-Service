@@ -10,7 +10,7 @@ from incidents.domain.models import Incident
 class IncidentRepository(ABC):
     """
     Hexagonal Port for incident persistence.
-    
+
     Implementations will be in the infrastructure layer
     (e.g., Django ORM + PostgreSQL).
     """
@@ -19,10 +19,10 @@ class IncidentRepository(ABC):
     def save(self, incident: Incident) -> Incident:
         """
         Persist an incident and return the saved instance.
-        
+
         Args:
             incident: Incident aggregate to save
-            
+
         Returns:
             Incident: The persisted incident (may have generated fields like ID)
         """
@@ -32,10 +32,10 @@ class IncidentRepository(ABC):
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """
         Retrieve an incident by its ID.
-        
+
         Args:
             incident_id: The incident UUID
-            
+
         Returns:
             Incident or None if not found
         """
@@ -45,7 +45,7 @@ class IncidentRepository(ABC):
     def find_all(self) -> List[Incident]:
         """
         Retrieve all incidents.
-        
+
         Returns:
             List of all incidents
         """
@@ -55,10 +55,10 @@ class IncidentRepository(ABC):
     def find_by_placa(self, placa: str) -> List[Incident]:
         """
         Find all incidents for a given vehicle plate.
-        
+
         Args:
             placa: Vehicle plate number
-            
+
         Returns:
             List of incidents matching the plate
         """
@@ -68,10 +68,10 @@ class IncidentRepository(ABC):
     def find_by_conductor(self, id_conductor: str) -> List[Incident]:
         """
         Find all incidents reported by a conductor.
-        
+
         Args:
             id_conductor: Conductor identifier
-            
+
         Returns:
             List of incidents for the conductor
         """
@@ -83,11 +83,11 @@ class IncidentRepository(ABC):
     ) -> List[Incident]:
         """
         Find incidents within a date range.
-        
+
         Args:
             fecha_desde: Start date (inclusive)
             fecha_hasta: End date (inclusive)
-            
+
         Returns:
             List of incidents in the date range
         """
@@ -105,7 +105,7 @@ class IncidentRepository(ABC):
     ) -> List[Incident]:
         """
         Find incidents matching multiple filter criteria.
-        
+
         Args:
             tipo_incidente: Filter by incident type (HUMANO or MECANICO)
             gravedad: Filter by severity (LEVE or GRAVE)
@@ -113,7 +113,7 @@ class IncidentRepository(ABC):
             id_conductor: Filter by conductor ID
             fecha_desde: Filter by date range start
             fecha_hasta: Filter by date range end
-            
+
         Returns:
             List of incidents matching all specified filters
         """
@@ -123,11 +123,11 @@ class IncidentRepository(ABC):
     # def update_estado(self, incident_id: UUID, nuevo_estado: str) -> Incident:
     #     """
     #     Update the state of an incident (for audit trail).
-        
+
     #     Args:
     #         incident_id: The incident UUID
     #         nuevo_estado: New state value (e.g., "EN_GESTION")
-            
+
     #     Returns:
     #         Incident: The updated incident
     #     """

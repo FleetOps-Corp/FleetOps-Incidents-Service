@@ -1,4 +1,5 @@
 """Domain-specific exceptions."""
+
 from .domain_exceptions import (
     DomainException,
     InvalidIncidentTypeException,

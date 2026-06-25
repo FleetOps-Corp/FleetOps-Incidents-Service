@@ -1,13 +1,16 @@
 """Django app configuration."""
+
 from django.apps import AppConfig
 
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
 class IncidentsConfig(AppConfig):
     """Configuration for Incidents microservice Django app."""
+
     default_auto_field = "django.db.models.BigAutoField"
     name = "incidents"
     verbose_name = "Incidents Microservice - FleetOps Platform"
@@ -15,13 +18,21 @@ class IncidentsConfig(AppConfig):
     def ready(self):
         """Wire up use case dependencies on app startup."""
         from incidents.infrastructure.api.views import set_use_cases
-        from incidents.application.use_cases import RegisterIncidentUseCase, QueryIncidentsUseCase
-        from incidents.infrastructure.adapters.persistence.incident_repository import DjangoIncidentRepository
-        from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
+        from incidents.application.use_cases import (
+            RegisterIncidentUseCase,
+            QueryIncidentsUseCase,
+        )
+        from incidents.infrastructure.adapters.persistence.incident_repository import (
+            DjangoIncidentRepository,
+        )
+        from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
+            RabbitMQProducer,
+        )
         from incidents.domain.services import IncidentService, VehicleValidatorService
         from incidents.domain.ports import VehicleClientPort
+
         # from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import VehicleClientWithCircuitBreaker
-        
+
         class DummyVehicleClient(VehicleClientPort):
             def validate_plate_exists(self, placa: str) -> bool:
                 return True  # siempre válido
@@ -42,7 +53,7 @@ class IncidentsConfig(AppConfig):
         # vehicle_client = VehicleClientWithCircuitBreaker(
         #     vehicles_api_url=os.getenv("VEHICLES_API_URL"),
         # )
-        
+
         vehicle_client = DummyVehicleClient()
 
         # Layer 2: Domain services

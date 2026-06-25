@@ -13,7 +13,7 @@ class LoggerFactory:
     def configure(cls, level: str = "INFO"):
         """
         Configure root logger.
-        
+
         Args:
             level: Logging level (INFO, DEBUG, WARNING, ERROR)
         """
@@ -41,10 +41,10 @@ class LoggerFactory:
     def get_logger(cls, name: str) -> logging.Logger:
         """
         Get configured logger for module.
-        
+
         Args:
             name: Module name (usually __name__)
-            
+
         Returns:
             Configured logger instance
         """

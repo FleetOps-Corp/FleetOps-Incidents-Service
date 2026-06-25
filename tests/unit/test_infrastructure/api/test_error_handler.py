@@ -14,7 +14,9 @@ class TestErrorHandlerMiddleware:
         assert result is expected_response
 
     def test_converts_unhandled_exception_to_response(self):
-        middleware = ErrorHandlerMiddleware(lambda request: (_ for _ in ()).throw(Exception("boom")))
+        middleware = ErrorHandlerMiddleware(
+            lambda request: (_ for _ in ()).throw(Exception("boom"))
+        )
 
         result = middleware(object())
 
