@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from uuid import UUID
 from datetime import datetime
 
 from incidents.domain.models import Incident

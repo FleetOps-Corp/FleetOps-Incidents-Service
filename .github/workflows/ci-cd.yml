@@ -56,7 +56,7 @@ jobs:
           DB_USER: test_user
           DB_PASSWORD: test_password
         run: |
-          pytest tests/unit -v --cov=incidents --cov-report=xml
+          pytest tests/unit -v --cov=incidents --cov-fail-under=80 --cov-report=xml
 
       - name: Run integration tests
         env:
@@ -89,7 +89,6 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
@@ -99,8 +98,16 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker buildx build --file Dockerfile --tag incidents-service:latest .
+          docker build --file Dockerfile --tag incidents-service:latest .
 
       - name: Run Docker image
         run: |
-          docker run --rm incidents-service:latest python -m pytest tests/unit -q
+          docker run --rm \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            -e VEHICLES_API_URL=http://vehicles-service:8000 \
+            -e DB_HOST=localhost \
+            -e DB_NAME=incidents_test \
+            -e DB_USER=test_user \
+            -e DB_PASSWORD=test_password \
+            incidents-service:latest python -m pytest tests/unit -q

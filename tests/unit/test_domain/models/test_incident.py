@@ -2,13 +2,10 @@
 
 import pytest
 from datetime import datetime
-from uuid import UUID
-
 from incidents.domain.models import Incident, IncidentType, IncidentSeverity, PlateNumber
 from incidents.domain.exceptions import (
     InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
-    InvalidPlateNumberException,
 )
 
 

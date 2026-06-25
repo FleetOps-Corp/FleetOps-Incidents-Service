@@ -54,3 +54,40 @@ class TestVehicleClientWithCircuitBreaker:
 
             with pytest.raises(VehicleNotRegisteredException):
                 client.validate_plate_exists("ABC-1234")
+
+    @patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get")
+    def test_get_vehicle_details_success(self, mock_get, client):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"plate": "ABC-1234"}
+        mock_get.return_value = mock_response
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result == {"plate": "ABC-1234"}
+
+    @patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get")
+    def test_get_vehicle_details_not_found(self, mock_get, client):
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result is None
+
+    @patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get")
+    def test_get_vehicle_details_exception_returns_none(self, mock_get, client):
+        mock_get.side_effect = Exception("Connection refused")
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result is None
+
+    def test_breaker_listener_methods(self, client):
+        listener = client._breaker_listener()
+
+        listener.before_call(None, None)
+        listener.state_change(None, "closed", "open")
+        listener.failure(None, Exception("boom"))
+        listener.success(None)

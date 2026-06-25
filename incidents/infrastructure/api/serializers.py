@@ -1,8 +1,6 @@
 """REST API Serializers - Conversion between JSON and domain models."""
 
 from rest_framework import serializers
-from datetime import datetime
-from typing import Optional
 
 
 class IncidentRequestSerializer(serializers.Serializer):

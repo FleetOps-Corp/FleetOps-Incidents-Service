@@ -2,14 +2,9 @@
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-from incidents.application.use_cases import (
-    RegisterIncidentUseCase,
-    QueryIncidentsUseCase,
-)
 
 from incidents.application.dtos import IncidentDTO, QueryFiltersDTO
 from incidents.application.exceptions import (
@@ -162,7 +157,6 @@ def query_incidents(request: Request) -> Response:
             fecha_desde=serializer.validated_data.get("fecha_desde"),
             fecha_hasta=serializer.validated_data.get("fecha_hasta"),
         )
-        print(query_incidents_uc)
         # Execute use case
         response_dtos = query_incidents_uc.execute(filters_dto)
 

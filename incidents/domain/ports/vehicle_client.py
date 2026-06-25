@@ -3,8 +3,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any
 
-from incidents.domain.exceptions import VehicleNotRegisteredException
-
 
 class VehicleClientPort(ABC):
     """

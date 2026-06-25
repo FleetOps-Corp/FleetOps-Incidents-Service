@@ -1,7 +1,6 @@
 """Django ORM Models - Persistence layer mapping to PostgreSQL."""
 
 from django.db import models
-from django.utils import timezone
 
 
 class Incident(models.Model):
