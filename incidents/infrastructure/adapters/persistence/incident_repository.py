@@ -1,10 +1,14 @@
 """Incident Repository - Hexagonal Driven Adapter implementing IncidentRepository port."""
 
 from typing import List, Optional
-from uuid import UUID
 from datetime import datetime
 
-from incidents.domain.models import Incident, IncidentType, IncidentSeverity, PlateNumber
+from incidents.domain.models import (
+    Incident,
+    IncidentType,
+    IncidentSeverity,
+    PlateNumber,
+)
 from incidents.domain.ports import IncidentRepository
 from incidents.infrastructure.adapters.persistence.models import (
     Incident as IncidentORM,
@@ -14,7 +18,7 @@ from incidents.infrastructure.adapters.persistence.models import (
 class DjangoIncidentRepository(IncidentRepository):
     """
     Repository implementation using Django ORM and PostgreSQL.
-    
+
     Implements the IncidentRepository Hexagonal port.
     Isolated from domain layer via port abstraction.
     """
@@ -22,13 +26,15 @@ class DjangoIncidentRepository(IncidentRepository):
     def save(self, incident: Incident) -> Incident:
         """
         Persist an incident to PostgreSQL.
-        
+
         Args:
             incident: Domain incident model
-            
+
         Returns:
             Incident: The persisted incident (with ID if newly created)
         """
+        assert incident.descripcion is not None
+
         orm_incident = IncidentORM(
             id=incident.id,
             fecha_hora=incident.fecha_hora,
@@ -44,10 +50,10 @@ class DjangoIncidentRepository(IncidentRepository):
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """
         Retrieve incident by ID.
-        
+
         Args:
             incident_id: UUID of incident
-            
+
         Returns:
             Incident domain model or None
         """
@@ -60,7 +66,7 @@ class DjangoIncidentRepository(IncidentRepository):
     def find_all(self) -> List[Incident]:
         """
         Retrieve all incidents.
-        
+
         Returns:
             List of incidents
         """
@@ -70,10 +76,10 @@ class DjangoIncidentRepository(IncidentRepository):
     def find_by_placa(self, placa: str) -> List[Incident]:
         """
         Find incidents by vehicle plate.
-        
+
         Args:
             placa: Vehicle plate number
-            
+
         Returns:
             List of incidents for the plate
         """
@@ -83,10 +89,10 @@ class DjangoIncidentRepository(IncidentRepository):
     def find_by_conductor(self, id_conductor: str) -> List[Incident]:
         """
         Find incidents by conductor.
-        
+
         Args:
             id_conductor: Conductor ID
-            
+
         Returns:
             List of incidents for the conductor
         """
@@ -98,11 +104,11 @@ class DjangoIncidentRepository(IncidentRepository):
     ) -> List[Incident]:
         """
         Find incidents within a date range.
-        
+
         Args:
             fecha_desde: Start date
             fecha_hasta: End date
-            
+
         Returns:
             List of incidents in range
         """
@@ -122,7 +128,7 @@ class DjangoIncidentRepository(IncidentRepository):
     ) -> List[Incident]:
         """
         Find incidents matching multiple filters.
-        
+
         Args:
             tipo_incidente: Filter by type (HUMANO or MECANICO)
             gravedad: Filter by severity (LEVE or GRAVE)
@@ -130,7 +136,7 @@ class DjangoIncidentRepository(IncidentRepository):
             id_conductor: Filter by conductor ID
             fecha_desde: Date range start
             fecha_hasta: Date range end
-            
+
         Returns:
             List of incidents matching all filters
         """
@@ -155,10 +161,10 @@ class DjangoIncidentRepository(IncidentRepository):
     def _orm_to_domain(orm_incident: IncidentORM) -> Incident:
         """
         Convert Django ORM model to domain model.
-        
+
         Args:
             orm_incident: ORM instance
-            
+
         Returns:
             Incident: Domain model
         """

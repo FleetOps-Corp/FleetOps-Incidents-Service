@@ -1,6 +1,5 @@
 """Unit tests for domain events."""
 
-import pytest
 from datetime import datetime
 from uuid import uuid4
 

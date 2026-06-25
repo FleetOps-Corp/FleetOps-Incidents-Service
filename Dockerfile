@@ -39,7 +39,6 @@ WORKDIR /app
 
 # Copy wheels from builder
 COPY --from=builder /build/wheels /wheels
-COPY --from=builder /build/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache /wheels/*

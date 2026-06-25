@@ -1,14 +1,14 @@
 """REST API Serializers - Conversion between JSON and domain models."""
 
 from rest_framework import serializers
-from datetime import datetime
-from typing import Optional
 
 
 class IncidentRequestSerializer(serializers.Serializer):
     """Deserializer for incident creation requests."""
 
-    id_conductor = serializers.CharField(max_length=255, required=True, allow_blank=False)
+    id_conductor = serializers.CharField(
+        max_length=255, required=True, allow_blank=False
+    )
     placa_vehiculo = serializers.CharField(max_length=20)
     tipo_incidente = serializers.ChoiceField(choices=["HUMANO", "MECANICO"])
     gravedad = serializers.ChoiceField(choices=["LEVE", "GRAVE"])
@@ -48,9 +48,7 @@ class IncidentQuerySerializer(serializers.Serializer):
     tipo_incidente = serializers.ChoiceField(
         choices=["HUMANO", "MECANICO"], required=False
     )
-    gravedad = serializers.ChoiceField(
-        choices=["LEVE", "GRAVE"], required=False
-    )
+    gravedad = serializers.ChoiceField(choices=["LEVE", "GRAVE"], required=False)
     placa = serializers.CharField(max_length=20, required=False)
     id_conductor = serializers.CharField(max_length=255, required=False)
     fecha_desde = serializers.DateTimeField(required=False)

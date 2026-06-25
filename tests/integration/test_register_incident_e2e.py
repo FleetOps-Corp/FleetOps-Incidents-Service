@@ -2,23 +2,28 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from uuid import uuid4
 
 from incidents.domain.models import Incident
 from incidents.domain.services import IncidentService, VehicleValidatorService
 from incidents.application.use_cases import RegisterIncidentUseCase
 from incidents.application.dtos import IncidentDTO
-from incidents.infrastructure.adapters.persistence.incident_repository import DjangoIncidentRepository
-from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
+from incidents.infrastructure.adapters.persistence.incident_repository import (
+    DjangoIncidentRepository,
+)
+from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
+    RabbitMQProducer,
+)
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
 
+
 class TestRegisterIncidentE2E:
     """
     End-to-End test: Complete transactional flow
-    
+
     Flow (Workflow 1 from SAD):
     1. REST API receives incident request
     2. Use case validates vehicle (Circuit Breaker)
@@ -26,7 +31,7 @@ class TestRegisterIncidentE2E:
     4. Repository persists to DB
     5. Message broker publishes event
     6. SAGA coordination begins
-    
+
     This test exercises ALL architectural layers.
     """
 
@@ -75,8 +80,7 @@ class TestRegisterIncidentE2E:
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",
-            fecha_hora =datetime.fromisoformat("2026-06-10T14:30:00")
-
+            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
         )
         saved_incident.id = incident_id
         mock_repo.save.return_value = saved_incident
@@ -88,8 +92,7 @@ class TestRegisterIncidentE2E:
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",
-            fecha_hora =datetime.fromisoformat("2026-06-10T14:30:00")
-
+            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
         )
 
         # Act
@@ -136,8 +139,7 @@ class TestRegisterIncidentE2E:
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
             descripcion="Me corte la mano",
-            fecha_hora =datetime.fromisoformat("2026-06-10T14:30:00")
-
+            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
         )
 
         # Act & Assert

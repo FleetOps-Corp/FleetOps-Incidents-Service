@@ -1,0 +1,113 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      VEHICLES_API_URL: http://vehicles-service:8000
+    
+    services:
+      postgres:
+        image: postgres:16.3-alpine3.20
+        env:
+          POSTGRES_DB: incidents_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ruff
+        run: |
+          ruff check incidents tests
+
+      - name: Run Mypy
+        run: |
+          mypy incidents
+
+      - name: Run unit tests
+        env:
+          DB_HOST: localhost
+          DB_NAME: incidents_test
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+        run: |
+          pytest tests/unit -v --cov=incidents --cov-fail-under=80 --cov-report=xml
+
+      - name: Run integration tests
+        env:
+          DB_HOST: localhost
+          DB_NAME: incidents_test
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+        run: |
+          pytest tests/integration -v
+
+      - name: Code coverage report
+        run: |
+          coverage report
+          coverage html
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+
+      #ruff sustituye a flake8, por lo que no es necesario ejecutar ambos. Se puede descomentar si se desea usar flake8 en lugar de ruff.
+      #- name: Run linting
+      #  run: |
+      #    flake8 incidents tests --max-line-length=100 --exclude=migrations
+
+      - name: Check code formatting
+        run: |
+          black --check incidents tests
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build --file Dockerfile --tag incidents-service:latest .
+
+      - name: Run Docker image
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            -e VEHICLES_API_URL=http://vehicles-service:8000 \
+            -e DB_HOST=localhost \
+            -e DB_NAME=incidents_test \
+            -e DB_USER=test_user \
+            -e DB_PASSWORD=test_password \
+            incidents-service:latest python -m pytest tests/unit -q

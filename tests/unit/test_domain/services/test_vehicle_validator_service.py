@@ -1,16 +1,15 @@
 """Unit tests for VehicleValidatorService."""
 
 import pytest
-from unittest.mock import Mock
-
-from incidents.domain.services import VehicleValidatorService
 from incidents.domain.exceptions import VehicleNotRegisteredException
 
 
 class TestVehicleValidatorService:
     """Test VehicleValidatorService validation logic."""
 
-    def test_validate_vehicle_exists_success(self, vehicle_validator_service, mock_vehicle_client):
+    def test_validate_vehicle_exists_success(
+        self, vehicle_validator_service, mock_vehicle_client
+    ):
         """Given: Valid plate, When: Validate, Then: Success."""
         # Arrange
         placa = "ABC-1234"
@@ -21,7 +20,9 @@ class TestVehicleValidatorService:
 
         mock_vehicle_client.validate_plate_exists.assert_called_once_with(placa)
 
-    def test_validate_vehicle_not_exists(self, vehicle_validator_service, mock_vehicle_client):
+    def test_validate_vehicle_not_exists(
+        self, vehicle_validator_service, mock_vehicle_client
+    ):
         """Given: Invalid plate, When: Validate, Then: Raise exception."""
         # Arrange
         placa = "FAKE-9999"
@@ -33,11 +34,15 @@ class TestVehicleValidatorService:
 
         assert "not registered" in str(exc_info.value.message)
 
-    def test_validate_vehicle_client_error(self, vehicle_validator_service, mock_vehicle_client):
+    def test_validate_vehicle_client_error(
+        self, vehicle_validator_service, mock_vehicle_client
+    ):
         """Given: Client error, When: Validate, Then: Raise VehicleNotRegisteredException."""
         # Arrange
         placa = "ABC-1234"
-        mock_vehicle_client.validate_plate_exists.side_effect = Exception("Network error")
+        mock_vehicle_client.validate_plate_exists.side_effect = Exception(
+            "Network error"
+        )
 
         # Act & Assert
         with pytest.raises(VehicleNotRegisteredException):
