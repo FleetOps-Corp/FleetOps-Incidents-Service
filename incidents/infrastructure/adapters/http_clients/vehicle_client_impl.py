@@ -130,6 +130,9 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         """Create listener for circuit breaker state changes."""
 
         class CircuitBreakerListener:
+            def before_call(self, breaker, func, *args, **kwargs):
+                pass
+
             def state_change(self, breaker, before, after):
                 logger.warning(
                     f"Circuit Breaker state change: {before} -> {after}"
