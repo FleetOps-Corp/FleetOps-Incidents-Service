@@ -41,6 +41,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run Ruff
+        run: |
+          ruff check incidents tests
+
+      - name: Run Mypy
+        run: |
+          mypy incidents
+
       - name: Run unit tests
         env:
           DB_HOST: localhost
@@ -69,9 +77,10 @@ jobs:
         with:
           files: ./coverage.xml
 
-      - name: Run linting
-        run: |
-          flake8 incidents tests --max-line-length=100 --exclude=migrations
+      #ruff sustituye a flake8, por lo que no es necesario ejecutar ambos. Se puede descomentar si se desea usar flake8 en lugar de ruff.
+      #- name: Run linting
+      #  run: |
+      #    flake8 incidents tests --max-line-length=100 --exclude=migrations
 
       - name: Check code formatting
         run: |

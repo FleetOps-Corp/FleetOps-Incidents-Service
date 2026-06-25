@@ -31,3 +31,7 @@ isort==5.13.2
 # Utilities
 python-dotenv==1.0.0
 pytz==2024.1
+
+#ci/cd
+ruff
+mypy
