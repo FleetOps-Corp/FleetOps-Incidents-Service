@@ -31,16 +31,18 @@ def set_use_cases(register_uc, query_uc):
     register_incident_uc = register_uc
     query_incidents_uc = query_uc
 
+
 # Permission classes need to be changed
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def create_incident(request: Request) -> Response:
     """
     POST /api/incidents/
-    
+
     Register a new incident.
-    
+
     Primary transactional flow exercising all architectural layers:
     1. API Gateway validates JWT token
     2. Django REST Framework deserializes request
@@ -49,10 +51,10 @@ def create_incident(request: Request) -> Response:
     5. Repository persists to PostgreSQL
     6. Message broker publishes event for SAGA coordination
     7. Response returned to client
-    
+
     Args:
         request: HTTP request with incident data
-        
+
     Returns:
         Response: HTTP 201 with incident data or error
     """
@@ -78,18 +80,14 @@ def create_incident(request: Request) -> Response:
         # Execute use case
         if register_incident_uc is None:
             raise RuntimeError("Use case not configured")
-        
+
         response_dto = register_incident_uc.execute(incident_dto)
 
         # Serialize response
-        response_serializer = IncidentResponseSerializer(
-            response_dto.to_dict()
-        )
+        response_serializer = IncidentResponseSerializer(response_dto.to_dict())
 
         logger.info(f"Incident created: {response_dto.id}")
-        return Response(
-            response_serializer.data, status=status.HTTP_201_CREATED
-        )
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
     except VehicleValidationError as e:
         logger.warning(f"Vehicle validation error: {str(e)}")
@@ -125,9 +123,9 @@ def create_incident(request: Request) -> Response:
 def query_incidents(request: Request) -> Response:
     """
     GET /api/incidents/
-    
+
     Query incidents with optional filters.
-    
+
     Query parameters:
     - tipo_incidente: HUMANO or MECANICO
     - gravedad: LEVE or GRAVE
@@ -135,10 +133,10 @@ def query_incidents(request: Request) -> Response:
     - id_conductor: Conductor ID
     - fecha_desde: Start date (ISO format)
     - fecha_hasta: End date (ISO format)
-    
+
     Args:
         request: HTTP request with query parameters
-        
+
     Returns:
         Response: HTTP 200 with incident list or error
     """
@@ -163,7 +161,7 @@ def query_incidents(request: Request) -> Response:
         # Execute use case
         if query_incidents_uc is None:
             raise RuntimeError("Use case not configured")
-        
+
         response_dtos = query_incidents_uc.execute(filters_dto)
 
         # Serialize responses
@@ -192,13 +190,13 @@ def query_incidents(request: Request) -> Response:
 def get_incident(request: Request, incident_id: str) -> Response:
     """
     GET /api/incidents/{incident_id}/
-    
+
     Retrieve a single incident by ID.
-    
+
     Args:
         request: HTTP request
         incident_id: UUID of incident
-        
+
     Returns:
         Response: HTTP 200 with incident data or 404
     """

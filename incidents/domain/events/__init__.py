@@ -1,4 +1,5 @@
 """Domain Events - Events published by the domain for SAGA coordination."""
+
 from .incident_events import (
     IncidentRegisteredEvent,
     # IncidentInGestionEvent,
@@ -6,5 +7,5 @@ from .incident_events import (
 
 __all__ = [
     "IncidentRegisteredEvent",
-   # "IncidentInGestionEvent",
+    # "IncidentInGestionEvent",
 ]

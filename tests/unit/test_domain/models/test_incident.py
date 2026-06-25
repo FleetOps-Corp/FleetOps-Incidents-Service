@@ -2,7 +2,12 @@
 
 import pytest
 from datetime import datetime
-from incidents.domain.models import Incident, IncidentType, IncidentSeverity, PlateNumber
+from incidents.domain.models import (
+    Incident,
+    IncidentType,
+    IncidentSeverity,
+    PlateNumber,
+)
 from incidents.domain.exceptions import (
     InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
@@ -119,7 +124,7 @@ class TestIncidentAggregateRoot:
                 placa_vehiculo="ABC-1234",
                 tipo_incidente="INVALID",
                 gravedad="GRAVE",
-                descripcion="El conductor se enveneno", 
+                descripcion="El conductor se enveneno",
                 fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
             )
 
@@ -131,7 +136,7 @@ class TestIncidentAggregateRoot:
                 placa_vehiculo="ABC-1234",
                 tipo_incidente="HUMANO",
                 gravedad="MODERATE",
-                descripcion="El conductor se enveneno", 
+                descripcion="El conductor se enveneno",
                 fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
             )
 
@@ -143,7 +148,7 @@ class TestIncidentAggregateRoot:
             placa_vehiculo="ABC-1234",
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
-            descripcion="El conductor se enveneno", 
+            descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         assert incident is not None
@@ -155,7 +160,7 @@ class TestIncidentAggregateRoot:
             placa_vehiculo="ABC",
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
-            descripcion="El conductor se enveneno", 
+            descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         assert incident.is_grave()
@@ -168,7 +173,7 @@ class TestIncidentAggregateRoot:
             placa_vehiculo="ABC",
             tipo_incidente="MECANICO",
             gravedad="LEVE",
-            descripcion="El conductor se enveneno", 
+            descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         assert incident.is_leve()
@@ -181,7 +186,7 @@ class TestIncidentAggregateRoot:
             placa_vehiculo="ABC",
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
-            descripcion="El conductor se enveneno", 
+            descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         assert incident.is_humano()
@@ -194,7 +199,7 @@ class TestIncidentAggregateRoot:
             placa_vehiculo="ABC",
             tipo_incidente="MECANICO",
             gravedad="LEVE",
-            descripcion="El conductor se enveneno", 
+            descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         assert incident.is_mecanico()
@@ -207,7 +212,7 @@ class TestIncidentAggregateRoot:
     #         placa_vehiculo="ABC-1234",
     #         tipo_incidente="MECANICO",
     #         gravedad="GRAVE",
-    #         descripcion="El conductor se enveneno", 
+    #         descripcion="El conductor se enveneno",
     #         fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
     #     )
 
@@ -231,7 +236,7 @@ class TestIncidentAggregateRoot:
     #         placa_vehiculo="ABC",
     #         tipo_incidente="HUMANO",
     #         gravedad="GRAVE",
-    #         descripcion="El conductor se enveneno", 
+    #         descripcion="El conductor se enveneno",
     #         fecha_hora=custom_time,
     #     )
 
@@ -244,7 +249,7 @@ class TestIncidentAggregateRoot:
     #         placa_vehiculo="ABC",
     #         tipo_incidente="HUMANO",
     #         gravedad="GRAVE",
-    #         descripcion="El conductor se enveneno", 
+    #         descripcion="El conductor se enveneno",
     #         fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
     #     )
 

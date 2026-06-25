@@ -2,7 +2,9 @@
 
 import pytest
 
-from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
+from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
+    RabbitMQProducer,
+)
 
 
 class TestRabbitMQProducer:

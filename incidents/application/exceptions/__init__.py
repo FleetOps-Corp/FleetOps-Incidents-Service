@@ -4,6 +4,7 @@
 
 from typing import Optional
 
+
 class ApplicationException(Exception):
     """Base exception for all application-level errors."""
 
@@ -17,7 +18,6 @@ class IncidentNotFoundApplicationError(ApplicationException):
     """Raised when an incident cannot be found in the application layer."""
 
     pass
-
 
 
 class VehicleValidationError(ApplicationException):

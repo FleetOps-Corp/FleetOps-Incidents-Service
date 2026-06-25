@@ -1,5 +1,7 @@
 """Domain exception hierarchy."""
+
 from typing import Optional
+
 
 class DomainException(Exception):
     """Base exception for all domain-level errors."""
