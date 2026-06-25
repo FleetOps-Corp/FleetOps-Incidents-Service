@@ -25,10 +25,10 @@ class IncidentRegisteredEvent:
         return {
             "event_type": "incident.registered",
             "incident_id": self.incident_id,
-            "id_conductor": self.id_conductor,
-            "placa_vehiculo": self.placa_vehiculo,
-            "tipo_incidente": self.tipo_incidente,
-            "gravedad": self.gravedad,
-            "descripcion": self.descripcion,
-            "fecha_evento": self.fecha_evento.isoformat(),
+            "driver_id": self.id_conductor,
+            "vehicle_id": self.placa_vehiculo,
+            "incident_type": self.tipo_incidente,
+            "severity": self.gravedad,
+            "description": self.descripcion,
+            "event_date": self.fecha_evento.isoformat(),
         }
