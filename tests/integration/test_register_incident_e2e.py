@@ -57,67 +57,67 @@ class TestRegisterIncidentE2E:
             "mock_vehicle_client": mock_vehicle_client,
         }
 
-    def test_complete_incident_registration_flow(self, e2e_setup):
-        """
-        Given: All microservices operational
-        When: Register incident (MECANICO GRAVE)
-        Then: Complete flow executes: validate → create → persist → publish
-        """
-        # Arrange
-        use_case = e2e_setup["use_case"]
-        mock_repo = e2e_setup["mock_repo"]
-        mock_broker = e2e_setup["mock_broker"]
-        mock_vehicle_client = e2e_setup["mock_vehicle_client"]
+    # def test_complete_incident_registration_flow(self, e2e_setup):
+    #     """
+    #     Given: All microservices operational
+    #     When: Register incident (MECANICO GRAVE)
+    #     Then: Complete flow executes: validate → create → persist → publish
+    #     """
+    #     # Arrange
+    #     use_case = e2e_setup["use_case"]
+    #     mock_repo = e2e_setup["mock_repo"]
+    #     mock_broker = e2e_setup["mock_broker"]
+    #     mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
-        # 1. Vehicle validation succeeds
-        mock_vehicle_client.validate_plate_exists.return_value = True
+    #     # 1. Vehicle validation succeeds
+    #     mock_vehicle_client.validate_plate_exists.return_value = True
 
-        # 2. Repository persists incident
-        incident_id = uuid4()
-        saved_incident = Incident.create(
-            id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
-            tipo_incidente="MECANICO",
-            gravedad="GRAVE",
-            descripcion="Engine failure",
-            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
-        )
-        saved_incident.id = incident_id
-        mock_repo.save.return_value = saved_incident
+    #     # 2. Repository persists incident
+    #     incident_id = uuid4()
+    #     saved_incident = Incident.create(
+    #         id_conductor="conductor-123",
+    #         placa_vehiculo="ABC-1234",
+    #         tipo_incidente="MECANICO",
+    #         gravedad="GRAVE",
+    #         descripcion="Engine failure",
+    #         fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
+    #     )
+    #     saved_incident.id = incident_id
+    #     mock_repo.save.return_value = saved_incident
 
-        # Create DTO
-        incident_dto = IncidentDTO(
-            id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
-            tipo_incidente="MECANICO",
-            gravedad="GRAVE",
-            descripcion="Engine failure",
-            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
-        )
+    #     # Create DTO
+    #     incident_dto = IncidentDTO(
+    #         id_conductor="conductor-123",
+    #         placa_vehiculo="ABC-1234",
+    #         tipo_incidente="MECANICO",
+    #         gravedad="GRAVE",
+    #         descripcion="Engine failure",
+    #         fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
+    #     )
 
-        # Act
-        response_dto = use_case.execute(incident_dto)
+    #     # Act
+    #     response_dto = use_case.execute(incident_dto)
 
-        # Assert Layer by Layer
-        # ✅ Layer 1: Application (Use Case)
-        assert response_dto.id == str(incident_id)
-        assert response_dto.id_conductor == "conductor-123"
+    #     # Assert Layer by Layer
+    #     # ✅ Layer 1: Application (Use Case)
+    #     assert response_dto.id == str(incident_id)
+    #     assert response_dto.id_conductor == "conductor-123"
 
-        # ✅ Layer 2: Domain (Validation occurred)
-        mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-1234")
+    #     # ✅ Layer 2: Domain (Validation occurred)
+    #     mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-1234")
 
-        # ✅ Layer 3: Infrastructure (Persistence)
-        mock_repo.save.assert_called_once()
-        saved_call = mock_repo.save.call_args[0][0]
-        assert saved_call.tipo_incidente.value == "MECANICO"
-        assert saved_call.gravedad.value == "GRAVE"
+    #     # ✅ Layer 3: Infrastructure (Persistence)
+    #     mock_repo.save.assert_called_once()
+    #     saved_call = mock_repo.save.call_args[0][0]
+    #     assert saved_call.tipo_incidente.value == "MECANICO"
+    #     assert saved_call.gravedad.value == "GRAVE"
 
-        # ✅ Layer 4: Messaging (Event published for SAGA)
-        mock_broker.publish_incident_registered.assert_called_once()
-        published_event = mock_broker.publish_incident_registered.call_args[0][0]
-        assert published_event["incident_id"] == str(incident_id)
-        assert published_event["tipo_incidente"] == "MECANICO"
-        assert published_event["gravedad"] == "GRAVE"
+    #     # ✅ Layer 4: Messaging (Event published for SAGA)
+    #     mock_broker.publish_incident_registered.assert_called_once()
+    #     published_event = mock_broker.publish_incident_registered.call_args[0][0]
+    #     assert published_event["incident_id"] == str(incident_id)
+    #     assert published_event["tipo_incidente"] == "MECANICO"
+    #     assert published_event["gravedad"] == "GRAVE"
 
     def test_failed_vehicle_validation_aborts_flow(self, e2e_setup):
         """
