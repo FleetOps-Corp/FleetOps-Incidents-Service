@@ -1,5 +1,7 @@
 """RabbitMQ Message Broker Adapter - Producer for publishing events."""
 
+# Revisar crear las colas y el enrutamiento correcto de los eventos a estas
+
 import json
 import pika
 from typing import Dict, Any

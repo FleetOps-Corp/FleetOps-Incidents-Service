@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 class IncidentsConfig(AppConfig):
     """Configuration for Incidents microservice Django app."""
     default_auto_field = "django.db.models.BigAutoField"
@@ -19,8 +18,17 @@ class IncidentsConfig(AppConfig):
         from incidents.application.use_cases import RegisterIncidentUseCase, QueryIncidentsUseCase
         from incidents.infrastructure.adapters.persistence.incident_repository import DjangoIncidentRepository
         from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
-        from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import VehicleClientWithCircuitBreaker
         from incidents.domain.services import IncidentService, VehicleValidatorService
+        from incidents.domain.ports import VehicleClientPort
+        from django.conf import settings
+        from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import VehicleClientWithCircuitBreaker
+        
+        class DummyVehicleClient(VehicleClientPort):
+            def validate_plate_exists(self, placa: str) -> bool:
+                return True  # siempre válido
+
+            def get_vehicle_details(self, placa: str):
+                return None
 
         # Layer 1: Driven adapters
         repo = DjangoIncidentRepository()
@@ -32,9 +40,11 @@ class IncidentsConfig(AppConfig):
             rabbitmq_password=os.getenv("RABBITMQ_PASSWORD"),
         )
 
-        vehicle_client = VehicleClientWithCircuitBreaker(
-            vehicles_api_url=os.getenv("VEHICLES_API_URL"),
-        )
+        # vehicle_client = VehicleClientWithCircuitBreaker(
+        #     vehicles_api_url=os.getenv("VEHICLES_API_URL"),
+        # )
+        
+        vehicle_client = DummyVehicleClient()
 
         # Layer 2: Domain services
         incident_service = IncidentService(repo, broker)
