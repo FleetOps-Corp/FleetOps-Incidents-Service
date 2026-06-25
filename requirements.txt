@@ -35,3 +35,8 @@ pytz==2024.1
 #ci/cd
 ruff
 mypy
+
+# Type checking
+django-stubs==5.2.1
+django-stubs-ext==5.2.1
+djangorestframework-stubs==3.16.1
