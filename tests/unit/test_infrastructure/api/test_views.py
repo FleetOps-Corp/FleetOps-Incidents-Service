@@ -8,10 +8,12 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from incidents.application.dtos import IncidentResponseDTO
-from incidents.application.exceptions import ApplicationException, VehicleValidationError
+from incidents.application.exceptions import (
+    ApplicationException,
+    VehicleValidationError,
+)
 from incidents.domain.exceptions import DomainException
 from incidents.infrastructure.api import views
-
 
 
 class TestCreateIncidentView:
@@ -30,7 +32,7 @@ class TestCreateIncidentView:
         views.set_use_cases(register_uc, query_uc)
         yield register_uc, query_uc
 
-#Fails bc id is generated in other way
+    # Fails bc id is generated in other way
     def test_create_incident_success(self, factory):
         """Given: Valid incident data, When: POST, Then: Return 201."""
         # Arrange
@@ -88,7 +90,7 @@ class TestCreateIncidentView:
         user = Mock()  # Crea un usuario ficticio
         request = factory.post("/api/incidents/", request_data, format="json")
         force_authenticate(request, user=user)  # Forzar el pase de autenticación de DRF
-        
+
         response = views.create_incident(request)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -15,11 +15,11 @@ logger = logger_factory.LoggerFactory().get_logger(__name__)
 class RabbitMQProducer(MessageBrokerPort):
     """
     Message Broker adapter for publishing events to RabbitMQ.
-    
+
     Publishes events for SAGA coordination:
     - incident.registered → Vehicles, Mantenimiento, Asignaciones
     - incident.in_gestion → Monitoring/reporting services
-    
+
     Uses durable queues and exchanges for reliability.
     """
 
@@ -33,7 +33,7 @@ class RabbitMQProducer(MessageBrokerPort):
     ):
         """
         Initialize RabbitMQ connection.
-        
+
         Args:
             rabbitmq_host: RabbitMQ host
             rabbitmq_port: RabbitMQ port
@@ -91,9 +91,9 @@ class RabbitMQProducer(MessageBrokerPort):
     def publish_incident_registered(self, event_data: Dict[str, Any]) -> None:
         """
         Publish incident_registered event.
-        
+
         Routing key determines which services receive the event based on incident type/severity.
-        
+
         Args:
             event_data: Event dictionary with incident details
         """
@@ -103,12 +103,14 @@ class RabbitMQProducer(MessageBrokerPort):
             routing_key=routing_key,
             event_data=event_data,
         )
-        logger.info(f"Published incident.registered event with routing key: {routing_key}")
+        logger.info(
+            f"Published incident.registered event with routing key: {routing_key}"
+        )
 
     # def publish_incident_in_gestion(self, event_data: Dict[str, Any]) -> None:
     #     """
     #     Publish incident_in_gestion event.
-        
+
     #     Args:
     #         event_data: Event dictionary
     #     """
@@ -124,7 +126,7 @@ class RabbitMQProducer(MessageBrokerPort):
     ) -> None:
         """
         Publish generic event to RabbitMQ.
-        
+
         Args:
             exchange_name: RabbitMQ exchange name
             routing_key: RabbitMQ routing key
@@ -147,9 +149,7 @@ class RabbitMQProducer(MessageBrokerPort):
                 ),
             )
 
-            logger.debug(
-                f"Event published to {exchange_name} with key {routing_key}"
-            )
+            logger.debug(f"Event published to {exchange_name} with key {routing_key}")
         except Exception as e:
             logger.error(f"Failed to publish event: {str(e)}")
             raise
@@ -164,15 +164,15 @@ class RabbitMQProducer(MessageBrokerPort):
     def _determine_routing_key(event_data: Dict[str, Any]) -> str:
         """
         Determine routing key based on incident type and severity.
-        
+
         Routing logic (from SAD):
         - mecanico.grave → Vehicles, Mantenimiento, Asignaciones
         - mecanico.leve → Asignaciones (delay notification)
         - humano.* → Asignaciones (conductor reassignment)
-        
+
         Args:
             event_data: Event dictionary
-            
+
         Returns:
             Routing key string
         """

@@ -50,7 +50,9 @@ class TestRegisterIncidentUseCase:
     def test_execute_vehicle_not_registered_raises_application_error(self):
         incident_service = Mock()
         vehicle_validator = Mock()
-        vehicle_validator.validate_vehicle_exists.side_effect = VehicleNotRegisteredException("missing")
+        vehicle_validator.validate_vehicle_exists.side_effect = (
+            VehicleNotRegisteredException("missing")
+        )
         use_case = RegisterIncidentUseCase(incident_service, vehicle_validator)
 
         dto = IncidentDTO(
