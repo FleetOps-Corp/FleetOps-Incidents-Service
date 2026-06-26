@@ -19,6 +19,7 @@ SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
     "change-this-in-production-load-from-env-variable",
 )
+ROOT_URLCONF = "incidents.urls"
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,7 +37,6 @@ MIDDLEWARE = [
     "incidents.infrastructure.api.middleware.error_handler.ErrorHandlerMiddleware",
 ]
 
-ROOT_URLCONF = "incidents.urls"
 
 TEMPLATES = [
     {
