@@ -1,13 +1,12 @@
 """Django ORM Models - Persistence layer mapping to PostgreSQL."""
 
 from django.db import models
-from django.utils import timezone
 
 
 class Incident(models.Model):
     """
     Incident ORM Model - Maps to 'incidents' table in PostgreSQL.
-    
+
     Immutable by design: Once created, core fields should not be modified.
     State transitions recorded in IncidentAudit table instead.
     """

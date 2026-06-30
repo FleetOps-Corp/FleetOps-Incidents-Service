@@ -1,10 +1,10 @@
 """Unit tests for RabbitMQ producer adapter."""
 
 import pytest
-import json
-from unittest.mock import Mock, patch, MagicMock
 
-from incidents.infrastructure.adapters.messaging.rabbitmq_producer import RabbitMQProducer
+from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
+    RabbitMQProducer,
+)
 
 
 class TestRabbitMQProducer:
@@ -21,8 +21,8 @@ class TestRabbitMQProducer:
     def test_determine_routing_key_mecanico_grave(self, producer):
         """Given: Mechanical grave incident, When: Determine routing key, Then: Correct key."""
         event_data = {
-            "tipo_incidente": "MECANICO",
-            "gravedad": "GRAVE",
+            "incident_type": "MECANICO",
+            "severity": "GRAVE",
         }
 
         key = producer._determine_routing_key(event_data)
@@ -32,8 +32,8 @@ class TestRabbitMQProducer:
     def test_determine_routing_key_mecanico_leve(self, producer):
         """Given: Mechanical mild incident, When: Determine key, Then: Correct key."""
         event_data = {
-            "tipo_incidente": "MECANICO",
-            "gravedad": "LEVE",
+            "incident_type": "MECANICO",
+            "severity": "LEVE",
         }
 
         key = producer._determine_routing_key(event_data)
@@ -43,8 +43,8 @@ class TestRabbitMQProducer:
     def test_determine_routing_key_humano(self, producer):
         """Given: Human incident, When: Determine key, Then: Humano key."""
         event_data = {
-            "tipo_incidente": "HUMANO",
-            "gravedad": "GRAVE",
+            "incident_type": "HUMANO",
+            "severity": "GRAVE",
         }
 
         key = producer._determine_routing_key(event_data)

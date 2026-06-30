@@ -1,8 +1,6 @@
 """Query Incidents Use Case - Retrieval and filtering of incidents."""
 
 from typing import List
-from datetime import datetime
-from uuid import UUID
 
 from incidents.domain.services import IncidentService
 from incidents.domain.models import Incident
@@ -13,19 +11,19 @@ from incidents.application.exceptions import IncidentNotFoundApplicationError
 class QueryIncidentsUseCase:
     """
     Use Case: Query and filter incidents.
-    
+
     Supports:
     - Filtering by type, severity, plate, conductor, date range
     - Combining multiple filters
     - Retrieving all incidents (no filter)
-    
+
     (Workflow 3 from SAD - Consulta de Incidentes por el Servicio de Reportes)
     """
 
     def __init__(self, incident_service: IncidentService):
         """
         Initialize use case with domain service.
-        
+
         Args:
             incident_service: Domain service for incident operations
         """
@@ -34,10 +32,10 @@ class QueryIncidentsUseCase:
     def execute(self, filters: QueryFiltersDTO) -> List[IncidentResponseDTO]:
         """
         Execute incident query with filters.
-        
+
         Args:
             filters: QueryFiltersDTO with optional filter criteria
-            
+
         Returns:
             List of IncidentResponseDTO matching filters
         """
@@ -50,13 +48,12 @@ class QueryIncidentsUseCase:
             fecha_hasta=filters.fecha_hasta,
         )
 
-        return [
-            self._incident_to_response_dto(incident)
-            for incident in incidents
-        ]
+        return [self._incident_to_response_dto(incident) for incident in incidents]
 
     def execute_by_id(self, incident_id: str) -> IncidentResponseDTO:
-        incident = self.incident_service.find_by_id(incident_id)  # ← uses new service method
+        incident = self.incident_service.find_by_id(
+            incident_id
+        )  # ← uses new service method
         if not incident:
             raise IncidentNotFoundApplicationError(
                 f"Incident with ID {incident_id} not found."

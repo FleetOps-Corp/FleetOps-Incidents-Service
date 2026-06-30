@@ -7,17 +7,17 @@ from incidents.domain.ports import VehicleClientPort
 class VehicleValidatorService:
     """
     Domain Service responsible for validating vehicle registration.
-    
+
     Encapsulates the business rule: "An incident can only be registered
     for a vehicle that is registered in the system."
-    
+
     Depends on VehicleClientPort (Hexagonal interface).
     """
 
     def __init__(self, vehicle_client: VehicleClientPort):
         """
         Initialize service with vehicle client adapter.
-        
+
         Args:
             vehicle_client: Implementation of VehicleClientPort
         """
@@ -26,10 +26,10 @@ class VehicleValidatorService:
     def validate_vehicle_exists(self, placa: str) -> None:
         """
         Validate that a vehicle plate is registered.
-        
+
         Args:
             placa: Vehicle plate number
-            
+
         Raises:
             VehicleNotRegisteredException: If plate is not registered or validation fails
         """

@@ -7,10 +7,11 @@ from incidents.domain.models import Incident
 from incidents.domain.ports import IncidentRepository, MessageBrokerPort
 from incidents.domain.events import IncidentRegisteredEvent
 
+
 class IncidentService:
     """
     Domain Service for incident management.
-    
+
     Orchestrates:
     - Incident creation and validation
     - Event publishing to trigger SAGA workflows
@@ -22,7 +23,7 @@ class IncidentService:
     ):
         """
         Initialize service with repository and message broker adapters.
-        
+
         Args:
             incident_repo: Implementation of IncidentRepository
             message_broker: Implementation of MessageBrokerPort
@@ -41,12 +42,12 @@ class IncidentService:
     ) -> Incident:
         """
         Register a new incident (Core Business Process).
-        
+
         Workflow:
         1. Create incident aggregate (validates all inputs)
         2. Persist to repository
         3. Publish incident_registered event for SAGA coordination
-        
+
         Args:
             id_conductor: Conductor identifier
             placa_vehiculo: Vehicle plate (assumed validated externally)
@@ -54,10 +55,10 @@ class IncidentService:
             gravedad: Severity (LEVE or GRAVE)
             descripcion:  detailed description
             fecha_hora:  timestamp (defaults to now)
-            
+
         Returns:
             Incident: The registered incident
-            
+
         Raises:
             InvalidIncidentTypeException: If tipo_incidente is invalid
             InvalidIncidentSeverityException: If gravedad is invalid
@@ -92,7 +93,7 @@ class IncidentService:
     ) -> List[Incident]:
         """
         Query incidents with optional filters.
-        
+
         Args:
             tipo_incidente: Filter by type (HUMANO or MECANICO)
             gravedad: Filter by severity (LEVE or GRAVE)
@@ -100,7 +101,7 @@ class IncidentService:
             id_conductor: Filter by conductor ID
             fecha_desde: Filter by date range start
             fecha_hasta: Filter by date range end
-            
+
         Returns:
             List of incidents matching criteria
         """
@@ -116,12 +117,12 @@ class IncidentService:
     # def update_incident_to_gestion(self, incident_id) -> Incident:
     #     """
     #     Transition incident to EN_GESTION state.
-        
+
     #     Called after SAGA confirmation from all microservices.
-        
+
     #     Args:
     #         incident_id: UUID of incident to update
-            
+
     #     Returns:
     #         Incident: Updated incident
     #     """
@@ -133,15 +134,18 @@ class IncidentService:
     def _publish_incident_registered_event(self, incident: Incident) -> None:
         """
         Publish incident_registered event for SAGA orchestration.
-        
+
         This event is consumed by:
         - Vehicles: marks vehicle unavailable (if grave)
         - Mantenimiento: schedules maintenance (if grave + mecanico)
         - Asignaciones: handles reassignment or delay notification
-        
+
         Args:
             incident: The incident to publish
         """
+
+        assert incident.descripcion is not None
+
         event = IncidentRegisteredEvent(
             incident_id=incident.id,
             id_conductor=incident.id_conductor,
@@ -152,7 +156,7 @@ class IncidentService:
             fecha_evento=datetime.utcnow(),
         )
         self.message_broker.publish_incident_registered(event.to_dict())
-        
+
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """Retrieve a single incident by ID."""
         return self.incident_repo.find_by_id(incident_id)

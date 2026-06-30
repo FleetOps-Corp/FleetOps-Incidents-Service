@@ -23,7 +23,6 @@ The microservice isolates **pure domain logic** from external technologies:
 ### Design Patterns
 
 ✅ **Circuit Breaker** - Resilience for Vehicle microservice calls  
-✅ **SAGA Pattern** - Distributed transaction coordination with compensations  
 ✅ **Repository Pattern** - Abstracted persistence via Hexagonal ports  
 ✅ **Message Broker Pattern** - Async decoupling with RabbitMQ  
 ✅ **API Gateway** - Centralized auth, JWT validation, rate limiting  
@@ -35,7 +34,7 @@ The microservice isolates **pure domain logic** from external technologies:
 | :--- | :--- | :--- |
 | **Availability** | CRITICAL | Circuit Breaker, dead-letter queues, health checks |
 | **Trazability** | CRITICAL | Immutable incident records + audit trail |
-| **Resilience** | CRITICAL | SAGA pattern, message retry policies |
+| **Resilience** | CRITICAL | message retry policies |
 | **Security** | CRITICAL | JWT auth via API Gateway, input validation |
 | **Modifiability** | HIGH | Hexagonal isolation; adapters swappable |
 | **Scalability** | HIGH | Stateless REST, containerized, horizontal replication |
@@ -61,7 +60,7 @@ The microservice isolates **pure domain logic** from external technologies:
 ### 1. Clone and Setup
 
 ```bash
-git clone [insert link for repo]
+git clone https://github.com/FleetOps-Corp/FleetOps-Incidents-Service
 ```
 
 ### 2. Run with Docker Compose
@@ -102,8 +101,17 @@ docker-compose down -v
 ### Setup Virtual Environment
 
 ```bash
-python3.11 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+o en Windows
+
+```bash
+python3 -m venv venv
+env\Scripts\activate
 
 pip install -r requirements.txt
 ```
@@ -124,14 +132,26 @@ python manage.py runserver 0.0.0.0:8000 --settings incidents.settings.developmen
 
 ## Running Tests
 
+### Mypy check
+
+```bash
+mypy .
+```
+
+### Ruff check
+
+```bash
+ruff check .
+```
+
 ### Unit Tests (100% Coverage Target)
 
 ```bash
 # Run all unit tests
-pytest tests/unit -v
+pytest
 
 # Run with coverage report
-pytest tests/unit --cov=incidents --cov-report=html
+pytest --cov=incidents --cov-report=html
 
 # View HTML coverage report
 open htmlcov/index.html
@@ -234,38 +254,7 @@ See `ARCHITECTURE.md` for detailed ADRs.
 
 ## CI/CD Pipeline
 
-**GitHub Actions Workflow** (`.github/workflows/ci-cd.yml`):
-
-1. **Build Phase**
-   - Checkout code
-   - Setup Python 3.11
-
-2. **Test Phase**
-   - Run unit tests (pytest)
-   - Run integration tests
-   - Generate coverage report
-   - Upload to Codecov
-
-3. **Lint Phase**
-   - Flake8 (code style)
-   - Black (code formatting)
-
-4. **Docker Phase** (on main branch only)
-   - Build multi-stage Docker image
-   - Verify image runs tests
-
-**Commands:**
-
-```bash
-# Run all checks locally (before pushing)
-pytest tests/ --cov=incidents
-flake8 incidents tests
-black --check incidents tests
-
-# Auto-format code
-black incidents tests
-isort incidents tests
-```
+on building . . .
 
 ---
 

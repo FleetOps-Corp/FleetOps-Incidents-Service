@@ -1,9 +1,11 @@
 """Django production settings."""
 
-from .base import *
+import os
+
+from .base import *  # noqa: F403
 
 DEBUG = False
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")  # noqa: F405
 
 # Security
 SECURE_SSL_REDIRECT = True
@@ -15,4 +17,4 @@ SECURE_CONTENT_SECURITY_POLICY = {
 }
 
 # CORS
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")  # noqa: F405

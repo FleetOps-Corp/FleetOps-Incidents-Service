@@ -9,7 +9,7 @@ from typing import Optional
 class QueryFiltersDTO:
     """
     DTO for incident query parameters.
-    
+
     Encapsulates all possible filters for incident searches.
     """
 
@@ -22,6 +22,4 @@ class QueryFiltersDTO:
 
     def to_dict(self) -> dict:
         """Convert to dictionary, excluding None values."""
-        return {
-            k: v for k, v in self.__dict__.items() if v is not None
-        }
+        return {k: v for k, v in self.__dict__.items() if v is not None}

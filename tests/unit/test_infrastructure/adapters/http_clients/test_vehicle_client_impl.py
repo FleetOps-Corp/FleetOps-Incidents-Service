@@ -22,7 +22,9 @@ class TestVehicleClientWithCircuitBreaker:
             reset_timeout=60,
         )
 
-    @patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get")
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
     def test_validate_plate_exists_success(self, mock_get, client):
         """Given: Valid plate, When: Validate, Then: Return True."""
         # Arrange
@@ -36,7 +38,9 @@ class TestVehicleClientWithCircuitBreaker:
         # Assert
         assert result is True
 
-    @patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get")
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
     def test_validate_plate_not_found(self, mock_get, client):
         """Given: Nonexistent plate, When: Validate, Then: Return False."""
         mock_response = Mock()
@@ -49,8 +53,53 @@ class TestVehicleClientWithCircuitBreaker:
 
     def test_validate_plate_connection_error(self, client):
         """Given: Connection error, When: Validate, Then: Raise VehicleNotRegisteredException."""
-        with patch("incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get") as mock_get:
+        with patch(
+            "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+        ) as mock_get:
             mock_get.side_effect = Exception("Connection refused")
 
             with pytest.raises(VehicleNotRegisteredException):
                 client.validate_plate_exists("ABC-1234")
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_get_vehicle_details_success(self, mock_get, client):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"plate": "ABC-1234"}
+        mock_get.return_value = mock_response
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result == {"plate": "ABC-1234"}
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_get_vehicle_details_not_found(self, mock_get, client):
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result is None
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_get_vehicle_details_exception_returns_none(self, mock_get, client):
+        mock_get.side_effect = Exception("Connection refused")
+
+        result = client.get_vehicle_details("ABC-1234")
+
+        assert result is None
+
+    def test_breaker_listener_methods(self, client):
+        listener = client._breaker_listener()
+
+        listener.before_call(None, None)
+        listener.state_change(None, "closed", "open")
+        listener.failure(None, Exception("boom"))
+        listener.success(None)

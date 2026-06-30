@@ -1,8 +1,12 @@
 """Test configuration and fixtures."""
 
 import pytest
-from unittest.mock import Mock, MagicMock
-from incidents.domain.ports import IncidentRepository, MessageBrokerPort, VehicleClientPort
+from unittest.mock import Mock
+from incidents.domain.ports import (
+    IncidentRepository,
+    MessageBrokerPort,
+    VehicleClientPort,
+)
 from incidents.domain.services import IncidentService, VehicleValidatorService
 from incidents.application.use_cases import (
     RegisterIncidentUseCase,

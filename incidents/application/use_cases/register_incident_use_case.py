@@ -13,19 +13,19 @@ from incidents.application.exceptions import VehicleValidationError
 class RegisterIncidentUseCase:
     """
     Use Case: Register a new incident.
-    
+
     Workflow (Workflow 1 from SAD):
     1. API Gateway receives request and authenticates user
     2. Validate vehicle plate exists (via VehicleClientPort)
     3. Create and persist incident
     4. Publish incident_registered event
     5. Return HTTP 201 with incident data
-    
+
     SAGA coordination:
     - Vehicles marks vehicle unavailable (if grave)
     - Mantenimiento schedules maintenance (if grave + mecanico)
     - Asignaciones handles reassignment or delay notification
-    
+
     This is the PRIMARY TRANSACTIONAL FLOW exercising all architectural layers.
     """
 
@@ -36,7 +36,7 @@ class RegisterIncidentUseCase:
     ):
         """
         Initialize use case with domain services.
-        
+
         Args:
             incident_service: Domain service for incident operations
             vehicle_validator: Domain service for vehicle validation
@@ -47,13 +47,13 @@ class RegisterIncidentUseCase:
     def execute(self, dto: IncidentDTO) -> IncidentResponseDTO:
         """
         Execute incident registration workflow.
-        
+
         Args:
             dto: IncidentDTO with incident data from REST request
-            
+
         Returns:
             IncidentResponseDTO with registered incident data
-            
+
         Raises:
             VehicleValidationError: If plate is not registered
             DomainException: If incident data is invalid
@@ -84,10 +84,10 @@ class RegisterIncidentUseCase:
     def _incident_to_response_dto(incident: Incident) -> IncidentResponseDTO:
         """
         Convert domain Incident to response DTO.
-        
+
         Args:
             incident: Domain incident model
-            
+
         Returns:
             IncidentResponseDTO
         """

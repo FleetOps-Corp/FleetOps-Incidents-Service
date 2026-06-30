@@ -14,10 +14,10 @@ logger = logger_factory.LoggerFactory().get_logger(__name__)
 class VehicleClientWithCircuitBreaker(VehicleClientPort):
     """
     HTTP Client adapter for Vehicles microservice.
-    
+
     Implements Circuit Breaker pattern to prevent cascading failures.
     This is the ONLY synchronous REST call allowed between microservices.
-    
+
     Circuit Breaker states:
     - CLOSED: Normal operation, requests pass through
     - OPEN: Threshold of failures exceeded, requests fail fast
@@ -33,7 +33,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
     ):
         """
         Initialize client with Circuit Breaker.
-        
+
         Args:
             vehicles_api_url: Base URL of Vehicles API (e.g., http://vehicles-service:8000)
             timeout_seconds: Request timeout
@@ -53,21 +53,19 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
     def validate_plate_exists(self, placa: str) -> bool:
         """
         Verify vehicle plate is registered (Circuit Breaker protected).
-        
+
         Args:
             placa: Vehicle plate to validate
-            
+
         Returns:
             bool: True if plate exists
-            
+
         Raises:
             VehicleNotRegisteredException: If validation fails or service down
         """
         try:
             # Call through circuit breaker
-            result = self.breaker.call(
-                self._make_validation_request, placa
-            )
+            result = self.breaker.call(self._make_validation_request, placa)
             return result
         except Exception as e:
             logger.error(f"Vehicles API call failed for plate {placa}: {str(e)}")
@@ -78,15 +76,15 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
     def get_vehicle_details(self, placa: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve vehicle details (optional).
-        
+
         Args:
             placa: Vehicle plate
-            
+
         Returns:
             Dictionary with vehicle details or None
         """
         try:
-            url = f"{self.vehicles_api_url}/api/vehicles/{placa}"
+            url = f"{self.vehicles_api_url}/vehiculos/placa/{placa}"
             response = requests.get(url, timeout=self.timeout_seconds)
             if response.status_code == 200:
                 return response.json()
@@ -98,18 +96,18 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
     def _make_validation_request(self, placa: str) -> bool:
         """
         Actual HTTP request to Vehicles API.
-        
+
         Args:
             placa: Vehicle plate
-            
+
         Returns:
             bool: True if plate exists
-            
+
         Raises:
             Exception: On HTTP error
         """
         # Construct endpoint
-        url = f"{self.vehicles_api_url}/api/vehicles/validate/{placa}"
+        url = f"{self.vehicles_api_url}/vehiculos/placa/{placa}"
 
         # Make request
         response = requests.get(url, timeout=self.timeout_seconds)
@@ -121,24 +119,23 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         elif response.status_code == 404:
             # Plate not found
             return False
-        else:
-            # Other errors (500, etc.) should trigger circuit breaker
-            response.raise_for_status()
+
+        response.raise_for_status()
+        raise RuntimeError("Unreachable")
 
     @staticmethod
     def _breaker_listener():
         """Create listener for circuit breaker state changes."""
 
         class CircuitBreakerListener:
+            def before_call(self, breaker, func, *args, **kwargs):
+                pass
+
             def state_change(self, breaker, before, after):
-                logger.warning(
-                    f"Circuit Breaker state change: {before} -> {after}"
-                )
+                logger.warning(f"Circuit Breaker state change: {before} -> {after}")
 
             def failure(self, breaker, exception):
-                logger.warning(
-                    f"Circuit Breaker recorded failure: {str(exception)}"
-                )
+                logger.warning(f"Circuit Breaker recorded failure: {str(exception)}")
 
             def success(self, breaker):
                 logger.info("Circuit Breaker: Request succeeded")

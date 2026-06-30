@@ -2,10 +2,7 @@
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, call
-
 from incidents.domain.models import Incident
-from incidents.domain.services import IncidentService
 from incidents.domain.exceptions import (
     InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
@@ -15,7 +12,9 @@ from incidents.domain.exceptions import (
 class TestIncidentServiceRegister:
     """Test IncidentService.register_incident workflow."""
 
-    def test_register_incident_success(self, incident_service, mock_incident_repository, mock_message_broker):
+    def test_register_incident_success(
+        self, incident_service, mock_incident_repository, mock_message_broker
+    ):
         """
         Given: Valid incident data
         When: Register incident
@@ -36,7 +35,7 @@ class TestIncidentServiceRegister:
             tipo_incidente=tipo,
             gravedad=gravedad,
             descripcion=descripcion,
-            fecha_hora=fecha_hora
+            fecha_hora=fecha_hora,
         )
         mock_incident_repository.save.return_value = saved_incident
 
@@ -79,7 +78,9 @@ class TestIncidentServiceRegister:
                 fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
             )
 
-    def test_register_incident_publishes_correct_event(self, incident_service, mock_incident_repository, mock_message_broker):
+    def test_register_incident_publishes_correct_event(
+        self, incident_service, mock_incident_repository, mock_message_broker
+    ):
         """Given: Mechanical grave incident, When: Register, Then: Publish with correct data."""
         # Arrange
         saved_incident = Incident.create(
@@ -107,8 +108,8 @@ class TestIncidentServiceRegister:
         call_args = mock_message_broker.publish_incident_registered.call_args
         event_data = call_args[0][0]
 
-        assert event_data["tipo_incidente"] == "MECANICO"
-        assert event_data["gravedad"] == "GRAVE"
+        assert event_data["incident_type"] == "MECANICO"
+        assert event_data["severity"] == "GRAVE"
         assert event_data["event_type"] == "incident.registered"
 
 
@@ -119,8 +120,22 @@ class TestIncidentServiceQuery:
         """Given: No filters, When: Query, Then: Call repo find_by_filters."""
         # Arrange
         incidents = [
-            Incident.create("c1", "ABC", "HUMANO", "GRAVE", "El conductor se enveneno", datetime(2026, 6, 17, 15, 58, 0)),
-            Incident.create("c2", "XYZ", "MECANICO", "LEVE", "El conductor se enveneno", datetime(2026, 6, 17, 15, 58, 0)),
+            Incident.create(
+                "c1",
+                "ABC",
+                "HUMANO",
+                "GRAVE",
+                "El conductor se enveneno",
+                datetime(2026, 6, 17, 15, 58, 0),
+            ),
+            Incident.create(
+                "c2",
+                "XYZ",
+                "MECANICO",
+                "LEVE",
+                "El conductor se enveneno",
+                datetime(2026, 6, 17, 15, 58, 0),
+            ),
         ]
         mock_incident_repository.find_by_filters.return_value = incidents
 
@@ -140,10 +155,19 @@ class TestIncidentServiceQuery:
 
     def test_query_by_filters_tipo(self, incident_service, mock_incident_repository):
         """Given: Type filter, When: Query, Then: Pass to repo."""
-        incidents = [Incident.create("c1", "ABC", "HUMANO", "GRAVE", "El conductor se enveneno", datetime(2026, 6, 17, 15, 58, 0))]
+        incidents = [
+            Incident.create(
+                "c1",
+                "ABC",
+                "HUMANO",
+                "GRAVE",
+                "El conductor se enveneno",
+                datetime(2026, 6, 17, 15, 58, 0),
+            )
+        ]
         mock_incident_repository.find_by_filters.return_value = incidents
 
-        result = incident_service.query_incidents_by_filters(tipo_incidente="HUMANO")
+        incident_service.query_incidents_by_filters(tipo_incidente="HUMANO")
 
         mock_incident_repository.find_by_filters.assert_called_once_with(
             tipo_incidente="HUMANO",
@@ -154,7 +178,9 @@ class TestIncidentServiceQuery:
             fecha_hasta=None,
         )
 
-    def test_query_by_filters_multiple(self, incident_service, mock_incident_repository):
+    def test_query_by_filters_multiple(
+        self, incident_service, mock_incident_repository
+    ):
         """Given: Multiple filters, When: Query, Then: Pass all to repo."""
         incidents = []
         mock_incident_repository.find_by_filters.return_value = incidents

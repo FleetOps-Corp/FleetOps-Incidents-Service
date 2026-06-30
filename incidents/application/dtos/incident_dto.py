@@ -9,7 +9,7 @@ from typing import Optional
 class IncidentDTO:
     """
     Input DTO for creating a new incident.
-    
+
     Represents the data sent by a client in the REST API request.
     """
 
@@ -21,14 +21,15 @@ class IncidentDTO:
     descripcion: str
     fecha_hora: datetime
 
+
 @dataclass
 class IncidentResponseDTO:
     """
     Output DTO for incident responses.
-    
+
     Represents the data returned to the client.
     """
-    
+
     id: str
     fecha_hora: str
     id_conductor: str
