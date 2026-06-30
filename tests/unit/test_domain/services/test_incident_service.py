@@ -199,24 +199,3 @@ class TestIncidentServiceQuery:
             fecha_desde=None,
             fecha_hasta=None,
         )
-
-
-# class TestIncidentServiceUpdateState:
-#     """Test IncidentService state transition."""
-
-#     def test_update_to_en_gestion(self, incident_service, mock_incident_repository):
-#         """Given: Registered incident, When: Update to EN_GESTION, Then: Call repo."""
-#         from uuid import uuid4
-
-#         incident_id = uuid4()
-#         updated_incident = Incident.create("c1", "ABC", "HUMANO", "GRAVE","El conductor se enveneno", datetime(2026, 6, 17, 15, 58, 0))
-#         updated_incident.estado = "EN_GESTION"
-
-#         mock_incident_repository.update_estado.return_value = updated_incident
-
-#         result = incident_service.update_incident_to_gestion(incident_id)
-
-#         mock_incident_repository.update_estado.assert_called_once_with(
-#             incident_id, nuevo_estado="EN_GESTION"
-#         )
-#         assert result.estado == "EN_GESTION"
