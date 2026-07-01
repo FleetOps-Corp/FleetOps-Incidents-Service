@@ -176,8 +176,8 @@ class RabbitMQProducer(MessageBrokerPort):
         Returns:
             Routing key string
         """
-        tipo = event_data.get("tipo_incidente", "").upper()
-        gravedad = event_data.get("gravedad", "").upper()
+        tipo = event_data.get("incident_type", "").upper()
+        gravedad = event_data.get("severity", "").upper()
 
         if tipo == "MECANICO":
             if gravedad == "GRAVE":

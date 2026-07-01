@@ -108,8 +108,8 @@ class TestIncidentServiceRegister:
         call_args = mock_message_broker.publish_incident_registered.call_args
         event_data = call_args[0][0]
 
-        assert event_data["tipo_incidente"] == "MECANICO"
-        assert event_data["gravedad"] == "GRAVE"
+        assert event_data["incident_type"] == "MECANICO"
+        assert event_data["severity"] == "GRAVE"
         assert event_data["event_type"] == "incident.registered"
 
 
