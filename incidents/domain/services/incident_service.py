@@ -1,7 +1,7 @@
 """Incident Domain Service - Core business logic orchestration."""
 
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from incidents.domain.models import Incident
 from incidents.domain.ports import IncidentRepository

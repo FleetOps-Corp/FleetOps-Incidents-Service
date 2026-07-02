@@ -1,16 +1,18 @@
 """Test configuration and fixtures."""
 
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
+from incidents.application.use_cases import (
+    QueryIncidentsUseCase,
+    RegisterIncidentUseCase,
+)
 from incidents.domain.ports import (
     IncidentRepository,
     VehicleClientPort,
 )
 from incidents.domain.services import IncidentService, VehicleValidatorService
-from incidents.application.use_cases import (
-    RegisterIncidentUseCase,
-    QueryIncidentsUseCase,
-)
 
 
 @pytest.fixture

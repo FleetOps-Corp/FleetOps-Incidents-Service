@@ -2,6 +2,7 @@
 
 from rest_framework import status
 from rest_framework.response import Response
+
 from incidents.infrastructure.adapters.logging.logger_factory import logger_factory
 
 logger = logger_factory.get_logger(__name__)

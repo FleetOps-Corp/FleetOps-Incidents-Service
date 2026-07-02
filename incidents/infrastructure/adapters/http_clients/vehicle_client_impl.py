@@ -1,11 +1,13 @@
 """HTTP Client Adapter - Calls Vehicles microservice with Circuit Breaker pattern."""
 
-import requests, logging
-from pybreaker import CircuitBreaker
-from typing import Optional, Dict, Any
+import logging
+from typing import Any, Dict, Optional
 
-from incidents.domain.ports import VehicleClientPort
+import requests
+from pybreaker import CircuitBreaker
+
 from incidents.domain.exceptions import VehicleNotRegisteredException
+from incidents.domain.ports import VehicleClientPort
 from incidents.infrastructure.adapters.logging import logger_factory
 
 logger = logger_factory.LoggerFactory().get_logger(__name__)

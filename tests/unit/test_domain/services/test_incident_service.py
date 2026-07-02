@@ -1,12 +1,14 @@
 """Unit tests for IncidentService domain service."""
 
-import pytest
 from datetime import datetime
-from incidents.domain.models import Incident
+
+import pytest
+
 from incidents.domain.exceptions import (
-    InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
+    InvalidIncidentTypeException,
 )
+from incidents.domain.models import Incident
 
 
 class TestIncidentServiceRegister:
@@ -113,7 +115,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC",
+                "ABC-1234",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -121,7 +123,7 @@ class TestIncidentServiceQuery:
             ),
             Incident.create(
                 "c2",
-                "XYZ",
+                "XYZ-5678",
                 "MECANICO",
                 "LEVE",
                 "El conductor se enveneno",
@@ -149,7 +151,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC",
+                "ABC-1234",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",

@@ -1,16 +1,19 @@
 """Unit tests for Incident aggregate root."""
 
-import pytest
 from datetime import datetime
+
+import pytest
+
+from incidents.domain.exceptions import (
+    InvalidIncidentSeverityException,
+    InvalidIncidentTypeException,
+    InvalidPlateNumberException,
+)
 from incidents.domain.models import (
     Incident,
-    IncidentType,
     IncidentSeverity,
+    IncidentType,
     PlateNumber,
-)
-from incidents.domain.exceptions import (
-    InvalidIncidentTypeException,
-    InvalidIncidentSeverityException,
 )
 
 
@@ -63,10 +66,13 @@ class TestIncidentValueObjects:
 
     def test_plate_number_empty(self):
         """Given: Empty plate, When: Create, Then: Validation fails."""
-        # Note: Current implementation accepts any non-empty string
-        # This test documents the behavior
-        placa = PlateNumber("ABC-1234")
-        assert placa.value == "ABC-1234"
+        with pytest.raises(InvalidPlateNumberException):
+            PlateNumber("")
+
+    def test_plate_number_invalid_type(self):
+        """Given: Non-string plate, When: Create, Then: Validation fails."""
+        with pytest.raises(InvalidPlateNumberException):
+            PlateNumber(None)
 
     def test_plate_number_equals(self):
         """Given: Two plates, When: Compare, Then: Return correct result."""
@@ -76,6 +82,12 @@ class TestIncidentValueObjects:
 
         assert placa1.equals(placa2)
         assert not placa1.equals(placa3)
+
+    def test_plate_number_equals_non_plate(self):
+        """Given: Non-PlateNumber, When: Compare, Then: Return False."""
+        placa = PlateNumber("ABC-1234")
+
+        assert not placa.equals("ABC-1234")
 
     def test_plate_number_case_insensitive(self):
         """Given: Different cases, When: Compare, Then: Case-insensitive."""
@@ -141,22 +153,21 @@ class TestIncidentAggregateRoot:
 
     def test_incident_create_invalid_plate(self):
         """Given: Invalid plate, When: Create, Then: Should handle gracefully."""
-        # Current implementation is flexible; document actual behavior
-        incident = Incident.create(
-            id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
-            tipo_incidente="HUMANO",
-            gravedad="GRAVE",
-            descripcion="El conductor se enveneno",
-            fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
-        )
-        assert incident is not None
+        with pytest.raises(InvalidPlateNumberException):
+            Incident.create(
+                id_conductor="conductor-123",
+                placa_vehiculo="AB-123",
+                tipo_incidente="HUMANO",
+                gravedad="GRAVE",
+                descripcion="El conductor se enveneno",
+                fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
+            )
 
     def test_incident_is_grave(self):
         """Given: Grave incident, When: Check, Then: Return True."""
         incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC",
+            placa_vehiculo="ABC-1234",
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
@@ -169,7 +180,7 @@ class TestIncidentAggregateRoot:
         """Given: Mild incident, When: Check, Then: Return True."""
         incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC",
+            placa_vehiculo="ABC-1234",
             tipo_incidente="MECANICO",
             gravedad="LEVE",
             descripcion="El conductor se enveneno",
@@ -182,7 +193,7 @@ class TestIncidentAggregateRoot:
         """Given: Human-type incident, When: Check, Then: Return True."""
         incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC",
+            placa_vehiculo="ABC-1234",
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
@@ -195,7 +206,7 @@ class TestIncidentAggregateRoot:
         """Given: Mechanical incident, When: Check, Then: Return True."""
         incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC",
+            placa_vehiculo="ABC-1234",
             tipo_incidente="MECANICO",
             gravedad="LEVE",
             descripcion="El conductor se enveneno",

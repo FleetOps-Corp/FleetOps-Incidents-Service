@@ -1,8 +1,9 @@
 """Unit tests for QueryIncidentsUseCase."""
 
-import pytest
-from uuid import uuid4
 from datetime import datetime
+from uuid import uuid4
+
+import pytest
 
 from incidents.application.dtos import QueryFiltersDTO
 from incidents.application.exceptions import IncidentNotFoundApplicationError
@@ -20,7 +21,7 @@ class TestQueryIncidentsUseCase:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC",
+                "ABC-1234",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -28,7 +29,7 @@ class TestQueryIncidentsUseCase:
             ),
             Incident.create(
                 "c2",
-                "XYZ",
+                "XYZ-5678",
                 "MECANICO",
                 "LEVE",
                 "El conductor se durmio",
@@ -51,7 +52,12 @@ class TestQueryIncidentsUseCase:
     ):
         """Given: Type filter, When: Execute, Then: Return filtered incidents."""
         incident = Incident.create(
-            "c1", "ABC", "MECANICO", "GRAVE", "El conductor se enveneno", datetime.now()
+            "c1",
+            "ABC-1234",
+            "MECANICO",
+            "GRAVE",
+            "El conductor se enveneno",
+            datetime.now(),
         )
         mock_incident_repository.find_by_filters.return_value = [incident]
 
@@ -68,7 +74,12 @@ class TestQueryIncidentsUseCase:
         """Given: Valid incident ID, When: Query, Then: Return incident."""
         incident_id = uuid4()
         incident = Incident.create(
-            "c1", "ABC", "HUMANO", "GRAVE", "El conductor se enveneno", datetime.now()
+            "c1",
+            "ABC-1234",
+            "HUMANO",
+            "GRAVE",
+            "El conductor se enveneno",
+            datetime.now(),
         )
         incident.id = incident_id
 

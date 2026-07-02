@@ -1,22 +1,23 @@
 """End-to-End integration test - Complete transactional flow."""
 
-import pytest
 from datetime import datetime
 from unittest.mock import Mock
 
-# from uuid import uuid4
+import pytest
 
+from incidents.application.dtos import IncidentDTO
+from incidents.application.use_cases import RegisterIncidentUseCase
+from incidents.domain.models import Incident
+
+# from uuid import uuid4
 # from incidents.domain.models import Incident
 from incidents.domain.services import IncidentService, VehicleValidatorService
-from incidents.application.use_cases import RegisterIncidentUseCase
-from incidents.application.dtos import IncidentDTO
-from incidents.infrastructure.adapters.persistence.incident_repository import (
-    DjangoIncidentRepository,
-)
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
-from incidents.domain.models import Incident
+from incidents.infrastructure.adapters.persistence.incident_repository import (
+    DjangoIncidentRepository,
+)
 
 
 class TestRegisterIncidentE2E:

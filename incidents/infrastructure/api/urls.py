@@ -1,6 +1,7 @@
 """REST API URL Configuration."""
 
 from django.urls import path
+
 from incidents.infrastructure.api import views
 
 app_name = "incidents_api"

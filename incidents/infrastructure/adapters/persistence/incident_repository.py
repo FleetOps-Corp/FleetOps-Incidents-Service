@@ -1,12 +1,12 @@
 """Incident Repository - Hexagonal Driven Adapter implementing IncidentRepository port."""
 
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from incidents.domain.models import (
     Incident,
-    IncidentType,
     IncidentSeverity,
+    IncidentType,
     PlateNumber,
 )
 from incidents.domain.ports import IncidentRepository
