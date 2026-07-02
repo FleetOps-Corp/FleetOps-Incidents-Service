@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 
 from incidents.domain.models.value_objects import (
@@ -35,7 +34,7 @@ class Incident:
     gravedad: IncidentSeverity
 
     # Content
-    descripcion: Optional[str]  # ← fix: was str, should be Optional
+    descripcion: str
 
     # Identity (generated, so goes after required fields)
     id: str = field(default="")  # ← changed: now str, generated in create()
@@ -76,8 +75,8 @@ class Incident:
         placa_vehiculo: str,
         tipo_incidente: str,
         gravedad: str,
-        descripcion: Optional[str],  # ← fix: Optional
-        fecha_hora: Optional[datetime],  # ← fix: Optional, defaults to now
+        descripcion: str,
+        fecha_hora: datetime,
     ) -> "Incident":
         """
         Factory method to create a new Incident.

@@ -4,7 +4,6 @@ import pytest
 from unittest.mock import Mock
 from incidents.domain.ports import (
     IncidentRepository,
-    MessageBrokerPort,
     VehicleClientPort,
 )
 from incidents.domain.services import IncidentService, VehicleValidatorService
@@ -21,21 +20,15 @@ def mock_incident_repository():
 
 
 @pytest.fixture
-def mock_message_broker():
-    """Fixture: Mock message broker."""
-    return Mock(spec=MessageBrokerPort)
-
-
-@pytest.fixture
 def mock_vehicle_client():
     """Fixture: Mock vehicle client."""
     return Mock(spec=VehicleClientPort)
 
 
 @pytest.fixture
-def incident_service(mock_incident_repository, mock_message_broker):
+def incident_service(mock_incident_repository):
     """Fixture: Incident domain service with mocked adapters."""
-    return IncidentService(mock_incident_repository, mock_message_broker)
+    return IncidentService(mock_incident_repository)
 
 
 @pytest.fixture

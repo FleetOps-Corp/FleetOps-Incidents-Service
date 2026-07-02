@@ -13,13 +13,12 @@ class IncidentDTO:
     Represents the data sent by a client in the REST API request.
     """
 
-    id_conductor: str
-    placa_vehiculo: str
-    # Deberia ser valor numerico 1 o 2 ó los dejamos asi
-    tipo_incidente: str  # HUMANO or MECANICO
-    gravedad: str  # LEVE or GRAVE
-    descripcion: str
-    fecha_hora: datetime
+    driver_id: str
+    vehicle_id: str
+    incident_type: str  # HUMANO or MECANICO
+    severity: str  # LEVE or GRAVE
+    description: str
+    event_date: datetime
 
 
 @dataclass
@@ -30,26 +29,26 @@ class IncidentResponseDTO:
     Represents the data returned to the client.
     """
 
-    id: str
-    fecha_hora: str
-    id_conductor: str
-    placa_vehiculo: str
-    tipo_incidente: str
-    gravedad: str
-    descripcion: Optional[str]
+    incident_id: str
+    event_date: str
+    driver_id: str
+    vehicle_id: str
+    incident_type: str
+    severity: str
+    description: Optional[str]
     created_at: str
     updated_at: str
 
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization."""
         return {
-            "id": self.id,
-            "fecha_hora": self.fecha_hora,
-            "id_conductor": self.id_conductor,
-            "placa_vehiculo": self.placa_vehiculo,
-            "tipo_incidente": self.tipo_incidente,
-            "gravedad": self.gravedad,
-            "descripcion": self.descripcion,
+            "incident_id": self.incident_id,
+            "event_date": self.event_date,
+            "driver_id": self.driver_id,
+            "vehicle_id": self.vehicle_id,
+            "incident_type": self.incident_type,
+            "severity": self.severity,
+            "description": self.description,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }

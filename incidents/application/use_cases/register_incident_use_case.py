@@ -60,19 +60,19 @@ class RegisterIncidentUseCase:
         """
         # Step 1: Validate vehicle exists (Circuit Breaker protected)
         try:
-            self.vehicle_validator.validate_vehicle_exists(dto.placa_vehiculo)
+            self.vehicle_validator.validate_vehicle_exists(dto.vehicle_id)
         except VehicleNotRegisteredException as e:
             raise VehicleValidationError(str(e))
 
         # Step 2: Register incident (domain logic, event publishing)
         try:
             incident = self.incident_service.register_incident(
-                id_conductor=dto.id_conductor,
-                placa_vehiculo=dto.placa_vehiculo,
-                tipo_incidente=dto.tipo_incidente,
-                gravedad=dto.gravedad,
-                descripcion=dto.descripcion,
-                fecha_hora=dto.fecha_hora,
+                id_conductor=dto.driver_id,
+                placa_vehiculo=dto.vehicle_id,
+                tipo_incidente=dto.incident_type,
+                gravedad=dto.severity,
+                descripcion=dto.description,
+                fecha_hora=dto.event_date,
             )
         except DomainException as e:
             raise e
@@ -92,13 +92,13 @@ class RegisterIncidentUseCase:
             IncidentResponseDTO
         """
         return IncidentResponseDTO(
-            id=str(incident.id),
-            fecha_hora=incident.fecha_hora.isoformat(),
-            id_conductor=incident.id_conductor,
-            placa_vehiculo=incident.get_plate_str(),
-            tipo_incidente=incident.tipo_incidente.value,
-            gravedad=incident.gravedad.value,
-            descripcion=incident.descripcion,
+            incident_id=str(incident.id),
+            event_date=incident.fecha_hora.isoformat(),
+            driver_id=incident.id_conductor,
+            vehicle_id=incident.get_plate_str(),
+            incident_type=incident.tipo_incidente.value,
+            severity=incident.gravedad.value,
+            description=incident.descripcion,
             created_at=incident.created_at.isoformat(),
             updated_at=incident.updated_at.isoformat(),
         )

@@ -6,7 +6,7 @@
 
 The service centralizes incident registration, validation, querying, and SAGA-based coordination with downstream microservices (Vehicles, Mantenimiento, Asignaciones).
 
-**Built With:** Python 3.11, Django 4.2 LTS, PostgreSQL 16, RabbitMQ 3.13, Docker
+**Built With:** Python 3.11, Django 4.2 LTS, PostgreSQL 16, Docker
 
 ---
 
@@ -22,20 +22,17 @@ The microservice isolates **pure domain logic** from external technologies:
 
 ### Design Patterns
 
-✅ **Circuit Breaker** - Resilience for Vehicle microservice calls  
-✅ **Repository Pattern** - Abstracted persistence via Hexagonal ports  
-✅ **Message Broker Pattern** - Async decoupling with RabbitMQ  
-✅ **API Gateway** - Centralized auth, JWT validation, rate limiting  
-✅ **DDD (Domain-Driven Design)** - Aggregate roots, value objects, domain events
+**Circuit Breaker** - Resilience for Vehicle microservice calls  
+**Repository Pattern** - Abstracted persistence via Hexagonal ports  
+**DDD (Domain-Driven Design)** - Aggregate roots, value objects, domain events
 
 ### Quality Attributes (ISO/IEC 25010)
 
 | Attribute | Priority | Implementation |
 | :--- | :--- | :--- |
-| **Availability** | CRITICAL | Circuit Breaker, dead-letter queues, health checks |
-| **Trazability** | CRITICAL | Immutable incident records + audit trail |
+| **Availability** | CRITICAL | Circuit Breaker, health checks |
+| **Trazability** | CRITICAL | Immutable incident records |
 | **Resilience** | CRITICAL | message retry policies |
-| **Security** | CRITICAL | JWT auth via API Gateway, input validation |
 | **Modifiability** | HIGH | Hexagonal isolation; adapters swappable |
 | **Scalability** | HIGH | Stateless REST, containerized, horizontal replication |
 
@@ -51,8 +48,6 @@ The microservice isolates **pure domain logic** from external technologies:
 
 ### Optional Local Development
 - **PostgreSQL** 16+ (if running without Docker)
-- **RabbitMQ** 3.13+ (if running without Docker)
-
 ---
 
 ## Quick Start
@@ -66,7 +61,7 @@ git clone https://github.com/FleetOps-Corp/FleetOps-Incidents-Service
 ### 2. Run with Docker Compose
 
 ```bash
-# Start all services (PostgreSQL, RabbitMQ, Incidents API)
+# Start all services (PostgreSQL, Incidents API)
 docker compose up --build
 docker-compose up --build
 ```
@@ -80,9 +75,6 @@ docker-compose ps
 # Verify API is responding
 curl -X GET http://localhost:8000/api/incidents/
 
-# Access RabbitMQ Management Console
-open http://localhost:15672
-# Credentials: guest / guest
 ```
 
 ### 4. Stop Services
@@ -110,7 +102,7 @@ pip install -r requirements.txt
 o en Windows
 
 ```bash
-python3 -m venv venv
+python -m venv venv
 env\Scripts\activate
 
 pip install -r requirements.txt
@@ -120,12 +112,6 @@ pip install -r requirements.txt
 
 ```bash
 python manage.py migrate
-```
-
-### Start Development Server
-
-```bash
-python manage.py runserver 0.0.0.0:8000 --settings incidents.settings.development
 ```
 
 ---
@@ -143,6 +129,13 @@ mypy .
 ```bash
 ruff check .
 ```
+
+### Black check
+
+```bash
+black --check .
+```
+if errors occur, use ```black .``` in the root terminal
 
 ### Unit Tests (100% Coverage Target)
 
@@ -185,100 +178,163 @@ coverage report --fail-under=95
 
 ## API Endpoints
 
-on building . . .
+### Get All Incidents
 
-## Project Structure
+Retrieves all registered incidents. The endpoint also supports filtering using query parameters.
 
+**Endpoint**
+
+```http
+GET /api/incidents/
 ```
-incidents-microservice/
-│
-├── incidents/
-│   ├── domain/                          # Pure business logic layer
-│   │   ├── models/                      # Aggregates, value objects
-│   │   ├── services/                    # Domain services (orchestration)
-│   │   ├── ports/                       # Hexagonal interfaces (repository, broker, client)
-│   │   ├── events/                      # Domain events (for SAGA)
-│   │   └── exceptions/                  # Domain exceptions
-│   │
-│   ├── application/                     # Use cases layer
-│   │   ├── use_cases/                   # Use case orchestrators
-│   │   ├── dtos/                        # Data transfer objects
-│   │   └── exceptions/                  # Application exceptions
-│   │
-│   ├── infrastructure/                  # Adapters layer
-│   │   ├── api/                         # REST API (Driving Adapter)
-│   │   ├── adapters/
-│   │   │   ├── persistence/             # Database (Driven Adapter)
-│   │   │   ├── messaging/               # RabbitMQ (Driven Adapter)
-│   │   │   ├── http_clients/            # Vehicle service (Driven Adapter)
-│   │   │   └── logging/                 # Logging infrastructure
-│   │   └── config/                      # Django app configuration
-│   │
-│   ├── settings/                        # Django settings (base, dev, prod)
-│   ├── manage.py                        # Django entry point
-│   └── urls.py                          # Root URL routing
-│
-├── tests/
-│   ├── unit/                            # Unit tests (mocked adapters)
-│   │   ├── test_domain/                 # Domain layer tests
-│   │   ├── test_application/            # Application layer tests
-│   │   └── test_infrastructure/         # Adapter tests
-│   └── integration/                     # E2E tests (all layers)
-│
-├── Dockerfile                           # Multi-stage Docker build
-├── docker-compose.yml                   # Local development environment
-├── requirements.txt                     # Python dependencies
-├── .env.example                         # Environment template
-├── .coveragerc                          # Coverage configuration
-├── .gitignore                           # Git ignore rules
-└── README.md                            # This file
+
+#### Supported Query Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `incident_type` | Filter by incident type | `?incident_type=MECANICO` |
+| `severity` | Filter by severity | `?severity=GRAVE` |
+| `vehicle_id` | Filter by vehicle ID (license plate) | `?vehicle_id=ABC-129` |
+| `driver_id` | Filter by driver ID | `?driver_id=CONDUCTOR-001` |
+| `start_date` | Start date and time (ISO 8601) | `?start_date=2026-06-01T00:00:00` |
+| `end_date` | End date and time (ISO 8601) | `?end_date=2026-06-24T23:59:59` |
+
+#### Example Requests
+
+```http
+GET /api/incidents/
+```
+
+```http
+GET /api/incidents/?incident_type=MECANICO
+```
+
+```http
+GET /api/incidents/?severity=GRAVE&tipo_incidente=MECANICO
+```
+
+```http
+GET /api/incidents/?vehicle_id=ABC-123&gravedad=GRAVE
+```
+
+```http
+GET /api/incidents/?driver_id=CONDUCTOR-001
+```
+
+```http
+GET /api/incidents/?start_date=2026-06-01T00:00:00&end_date=2026-06-24T23:59:59
+```
+
+```http
+GET /api/incidents/?incident_type=HUMANO&start_date=2026-06-01T00:00:00
 ```
 
 ---
 
-## Architectural Decisions
+### Get Incident by ID
 
-### Key ADRs (Architectural Decision Records)
+Retrieves a single incident using its unique identifier.
 
-1. **Hexagonal Architecture** ← Maximizes testability, modularity, and technology independence
-2. **PostgreSQL with Immutable Incident Records** ← Strong audit trail, ACID compliance
-3. **SAGA Pattern for Distributed Transactions** ← Eventual consistency across microservices
-4. **RabbitMQ for Async Communication** ← Complete decoupling, fault tolerance
-5. **Circuit Breaker for External Calls** ← Resilience, fail-fast, prevent cascading failures
-6. **100% Unit Test Coverage** ← Production confidence, regression prevention
-7. **Django REST Framework** ← Mature, battle-tested, excellent ecosystem
+**Endpoint**
 
-See `ARCHITECTURE.md` for detailed ADRs.
+```http
+GET /api/incidents/{incident_id}
+```
+
+#### Example
+
+```http
+GET /api/incidents/INC-20260624-a460
+```
+
+#### Response
+
+```json
+{
+  "incident_id": "INC-20260624-a460",
+  "event_date": "2026-06-24T15:00:00+00:00",
+  "driver_id": "CONDUCTOR-002",
+  "vehicle_id": "ABC-124",
+  "incident_type": "MECANICO",
+  "severity": "LEVE",
+  "description": "El vehículo presentó falla en los frenos durante la ruta.",
+  "created_at": "2026-06-25T00:46:37.207518+00:00",
+  "updated_at": "2026-06-25T00:46:37.207538+00:00"
+}
+```
 
 ---
+
+### Create Incident
+
+Creates a new incident.
+
+**Endpoint**
+
+```http
+POST /api/incidents/create/
+```
+
+#### Request Body
+
+```json
+{
+    "driver_id": "CONDUCTOR-098",
+    "vehicle_id": "ABC-129",
+    "incident_type": "MECANICO",
+    "severity": "GRAVE",
+    "description": "El conductor se estrello",
+    "event_date": "2026-06-24T10:00:00"
+}
+```
+
+#### Response
+
+```json
+{
+  "incident_id": "INC-20260624-116a",
+  "event_date": "2026-06-24T10:00:00-05:00",
+  "driver_id": "CONDUCTOR-098",
+  "vehicle_id": "ABC-129",
+  "incident_type": "MECANICO",
+  "severity": "GRAVE",
+  "description": "El conductor se estrello",
+  "created_at": "2026-07-02T00:18:37.763930",
+  "updated_at": "2026-07-02T00:18:37.763934"
+}
+```
+---
+
 
 ## CI/CD Pipeline
 
-on building . . .
+This project uses **GitHub Actions** to automate code quality verification, testing, and Docker image validation. The pipeline is triggered on every **push** and **pull request** targeting the `main` and `develop` branches.
 
+### Continuous Integration (CI)
+
+The CI workflow performs the following tasks:
+
+1. Checks out the project source code.
+2. Sets up a Python 3.11 environment.
+3. Installs all project dependencies.
+4. Starts a temporary PostgreSQL service for testing.
+5. Performs static code analysis using:
+   - Ruff
+   - MyPy
+   - Black (format verification)
+6. Executes:
+   - Unit tests
+   - Integration tests
+7. Generates a code coverage report.
+8. Uploads coverage results to Codecov.
+
+### Docker Validation
+
+After all tests pass successfully, the pipeline:
+
+1. Builds the Docker image for the Incident Service.
+2. Starts a container from the generated image.
+3. Executes the unit test suite inside the container to verify that the application runs correctly in its deployment environment.
 ---
 
-## Known Limitations & Recommendations
-
-### Current Limitations
-
-1. **SAGA Orchestration Simplified** - Production should use dedicated saga orchestrator or choreography with saga state table
-2. **Synchronous Vehicle Validation** - Only synchronous REST call; consider async with DLQ fallback for critical path
-3. **No Circuit Breaker Fallback** - Failed vehicle validation aborts; could implement graceful degradation
-
-### Recommendations for Production
-
-- [ ] Implement Saga Orchestrator (Temporal, Cadence, or lightweight custom)
-- [ ] Add distributed tracing (Jaeger, DataDog)
-- [ ] Implement comprehensive monitoring (Prometheus, Grafana)
-- [ ] Add API versioning strategy
-- [ ] Implement request correlation IDs
-- [ ] Add request/response logging middleware
-- [ ] Implement API rate limiting per user/client
-- [ ] Add database connection pooling optimization
-- [ ] Implement graceful shutdown for containers
-- [ ] Add support for incident state machine with advanced workflows
-
----
-
-**Generated:** June 10, 2026 | **Version:** 1.0.0
+**Generated:** July 1, 2026 | **Version:** 2.0

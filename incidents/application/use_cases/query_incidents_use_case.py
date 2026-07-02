@@ -40,12 +40,12 @@ class QueryIncidentsUseCase:
             List of IncidentResponseDTO matching filters
         """
         incidents = self.incident_service.query_incidents_by_filters(
-            tipo_incidente=filters.tipo_incidente,
-            gravedad=filters.gravedad,
-            placa=filters.placa,
-            id_conductor=filters.id_conductor,
-            fecha_desde=filters.fecha_desde,
-            fecha_hasta=filters.fecha_hasta,
+            tipo_incidente=filters.incident_type,
+            gravedad=filters.severity,
+            placa=filters.vehicle_id,
+            id_conductor=filters.driver_id,
+            fecha_desde=filters.start_date,
+            fecha_hasta=filters.end_date,
         )
 
         return [self._incident_to_response_dto(incident) for incident in incidents]
@@ -64,14 +64,13 @@ class QueryIncidentsUseCase:
     def _incident_to_response_dto(incident: Incident) -> IncidentResponseDTO:
         """Convert domain Incident to response DTO."""
         return IncidentResponseDTO(
-            id=str(incident.id),
-            fecha_hora=incident.fecha_hora.isoformat(),
-            id_conductor=incident.id_conductor,
-            placa_vehiculo=incident.get_plate_str(),
-            tipo_incidente=incident.tipo_incidente.value,
-            gravedad=incident.gravedad.value,
-            descripcion=incident.descripcion,
-            # estado=incident.estado, # delete this
+            incident_id=str(incident.id),
+            event_date=incident.fecha_hora.isoformat(),
+            driver_id=incident.id_conductor,
+            vehicle_id=incident.get_plate_str(),
+            incident_type=incident.tipo_incidente.value,
+            severity=incident.gravedad.value,
+            description=incident.descripcion,
             created_at=incident.created_at.isoformat(),
             updated_at=incident.updated_at.isoformat(),
         )
