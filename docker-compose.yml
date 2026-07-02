@@ -23,25 +23,25 @@ services:
     networks:
       - incidents-network
 
-  # RabbitMQ Message Broker
-  rabbitmq:
-    image: rabbitmq:3.13-management-alpine
-    container_name: incidents-rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - incidents-network
+  # RabbitMQ Message Broker (gotta remove this)
+  # rabbitmq:
+  #   image: rabbitmq:3.13-management-alpine
+  #   container_name: incidents-rabbitmq
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+  #     RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   healthcheck:
+  #     test: ["CMD", "rabbitmq-diagnostics", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - incidents-network
 
   # Incidents Microservice
   incidents-service:
@@ -58,10 +58,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      # RABBITMQ_HOST: rabbitmq
+      # RABBITMQ_PORT: 5672
+      # RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      # RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
       VEHICLES_API_URL: http://vehicles-service:8000
       LOG_LEVEL: INFO
     ports:
@@ -69,8 +69,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      # rabbitmq:
+      #   condition: service_healthy
     volumes:
       - .:/app
     healthcheck:
@@ -87,7 +87,7 @@ services:
 
 volumes:
   postgres_data:
-  rabbitmq_data:
+  # rabbitmq_data:
 
 networks:
   incidents-network:

@@ -57,7 +57,7 @@ class IncidentsConfig(AppConfig):
         vehicle_client = DummyVehicleClient()
 
         # Layer 2: Domain services
-        incident_service = IncidentService(repo, broker)
+        incident_service = IncidentService(repo)
         vehicle_validator = VehicleValidatorService(vehicle_client)
 
         # Layer 3: Use cases
