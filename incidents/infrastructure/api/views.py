@@ -1,5 +1,7 @@
 """REST API Views - Endpoint handlers for incident operations."""
 
+import logging
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -23,6 +25,8 @@ logger = logger_factory.LoggerFactory().get_logger(__name__)
 
 register_incident_uc = None
 query_incidents_uc = None
+
+use_case_not_registered = "Use case not registered"
 
 
 def set_use_cases(register_uc, query_uc):
@@ -79,7 +83,7 @@ def create_incident(request: Request) -> Response:
 
         # Execute use case
         if register_incident_uc is None:
-            raise RuntimeError("Use case not configured")
+            raise RuntimeError(use_case_not_registered)
 
         response_dto = register_incident_uc.execute(incident_dto)
 
@@ -104,14 +108,14 @@ def create_incident(request: Request) -> Response:
         )
 
     except ApplicationException as e:
-        logger.error(f"Application exception: {str(e)}")
+        logging.exception(f"Application exception: {str(e)}")
         return Response(
             {"error": str(e), "code": e.code},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     except Exception as e:
-        logger.error(f"Unexpected error in create_incident: {str(e)}")
+        logging.exception(f"Unexpected error in create_incident: {str(e)}")
         return Response(
             {"error": "Internal server error"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -171,14 +175,14 @@ def query_incidents(request: Request) -> Response:
         return Response(response_data, status=status.HTTP_200_OK)
 
     except ApplicationException as e:
-        logger.error(f"Application exception: {str(e)}")
+        logging.exception(f"Application exception: {str(e)}")
         return Response(
             {"error": str(e), "code": e.code},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     except Exception as e:
-        logger.error(f"Unexpected error in query_incidents: {str(e)}")
+        logging.exception(f"Unexpected error in query_incidents: {str(e)}")
         return Response(
             {"error": "Internal server error"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -202,7 +206,7 @@ def get_incident(request: Request, incident_id: str) -> Response:
     """
     try:
         if query_incidents_uc is None:
-            raise RuntimeError("Use case not configured")
+            raise RuntimeError(use_case_not_registered)
         response_dto = query_incidents_uc.execute_by_id(incident_id)
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
         return Response(response_serializer.data, status=status.HTTP_200_OK)
@@ -214,7 +218,7 @@ def get_incident(request: Request, incident_id: str) -> Response:
         )
 
     except Exception as e:
-        logger.error(f"Error retrieving incident: {str(e)}")
+        logging.exception(f"Error retrieving incident: {str(e)}")
         return Response(
             {"error": "Incident not found"},
             status=status.HTTP_404_NOT_FOUND,

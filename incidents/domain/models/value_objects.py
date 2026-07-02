@@ -2,6 +2,7 @@
 
 from enum import Enum
 from dataclasses import dataclass
+import re
 
 from incidents.domain.exceptions import (
     InvalidIncidentTypeException,
@@ -60,15 +61,19 @@ class PlateNumber:
                 f"Invalid plate format: {self.value}. Expected format: ABC-1234 or similar."
             )
 
-    @staticmethod
-    def _is_valid_format() -> bool:
+    def _is_valid_format(self) -> bool:
         """
         Validate plate format.
         Allows standard formats: ABC-1234, ABC1234, etc.
         """
-        # Simple validation: non-empty, alphanumeric with optional dash
-        # Can be enhanced with regex if needed
-        return True  # Flexible validation for international formats
+        if not self.value or not isinstance(self.value, str):
+            return False
+            
+        # Expresión regular: 3 letras, un guion opcional y 3 números
+        pattern = r"^[A-Z]{3}-?\d{3}$"
+        
+        # Compara el texto (en mayúsculas) con el patrón
+        return bool(re.match(pattern, self.value.upper()))
 
     def __str__(self) -> str:
         """Return string representation of plate."""

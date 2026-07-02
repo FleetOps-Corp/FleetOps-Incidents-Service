@@ -1,6 +1,6 @@
 """HTTP Client Adapter - Calls Vehicles microservice with Circuit Breaker pattern."""
 
-import requests
+import requests, logging
 from pybreaker import CircuitBreaker
 from typing import Optional, Dict, Any
 
@@ -68,7 +68,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             result = self.breaker.call(self._make_validation_request, placa)
             return result
         except Exception as e:
-            logger.error(f"Vehicles API call failed for plate {placa}: {str(e)}")
+            logging.exception(f"Vehicles API call failed for plate {placa}: {str(e)}")
             raise VehicleNotRegisteredException(
                 f"Failed to validate plate {placa}: {str(e)}"
             )

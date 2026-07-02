@@ -1,5 +1,7 @@
 """Register Incident Use Case - Primary workflow for incident registration."""
 
+import logging
+
 from incidents.domain.services import IncidentService, VehicleValidatorService
 from incidents.domain.models import Incident
 from incidents.domain.exceptions import (
@@ -75,6 +77,7 @@ class RegisterIncidentUseCase:
                 fecha_hora=dto.event_date,
             )
         except DomainException as e:
+            logging.exception("A domain level error has happened")
             raise e
 
         # Step 3: Convert to response DTO
