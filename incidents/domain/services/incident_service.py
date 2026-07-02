@@ -6,6 +6,7 @@ from typing import Optional, List
 from incidents.domain.models import Incident
 from incidents.domain.ports import IncidentRepository
 
+
 class IncidentService:
     """
     Domain Service for incident management.
