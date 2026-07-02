@@ -33,9 +33,9 @@ def mock_vehicle_client():
 
 
 @pytest.fixture
-def incident_service(mock_incident_repository, mock_message_broker):
+def incident_service(mock_incident_repository):
     """Fixture: Incident domain service with mocked adapters."""
-    return IncidentService(mock_incident_repository, mock_message_broker)
+    return IncidentService(mock_incident_repository)
 
 
 @pytest.fixture

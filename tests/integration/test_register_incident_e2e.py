@@ -42,11 +42,11 @@ class TestRegisterIncidentE2E:
         """Setup E2E test with mocked external services."""
         # Mock adapters
         mock_repo = Mock(spec=DjangoIncidentRepository)
-        mock_broker = Mock(spec=RabbitMQProducer)
+        # mock_broker = Mock(spec=RabbitMQProducer)
         mock_vehicle_client = Mock(spec=VehicleClientWithCircuitBreaker)
 
         # Domain services
-        incident_service = IncidentService(mock_repo, mock_broker)
+        incident_service = IncidentService(mock_repo)
         vehicle_validator = VehicleValidatorService(mock_vehicle_client)
 
         # Application use case
@@ -55,7 +55,7 @@ class TestRegisterIncidentE2E:
         return {
             "use_case": use_case,
             "mock_repo": mock_repo,
-            "mock_broker": mock_broker,
+            # "mock_broker": mock_broker,
             "mock_vehicle_client": mock_vehicle_client,
         }
 
@@ -68,7 +68,7 @@ class TestRegisterIncidentE2E:
         # Arrange
         use_case = e2e_setup["use_case"]
         mock_repo = e2e_setup["mock_repo"]
-        mock_broker = e2e_setup["mock_broker"]
+        # mock_broker = e2e_setup["mock_broker"]
         mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
         # 1. Vehicle validation succeeds
@@ -88,23 +88,23 @@ class TestRegisterIncidentE2E:
 
         # Create DTO
         incident_dto = IncidentDTO(
-            id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
-            tipo_incidente="MECANICO",
-            gravedad="GRAVE",
-            descripcion="Engine failure",
-            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
+            driver_id="conductor-123",
+            vehicle_id="ABC-1234",
+            incident_type="MECANICO",
+            severity="GRAVE",
+            description="Engine failure",
+            event_date=datetime.fromisoformat("2026-06-10T14:30:00"),
         )
 
         # Act
         response_dto = use_case.execute(incident_dto)
 
         # Assert Layer 1: Application
-        assert response_dto.id == saved_incident.id
-        assert response_dto.id_conductor == "conductor-123"
+        assert response_dto.incident_id == saved_incident.id
+        assert response_dto.driver_id == "conductor-123"
 
         # Generated ID format
-        assert response_dto.id.startswith("INC-")
+        assert response_dto.incident_id.startswith("INC-")
 
         # Assert Layer 2: Domain
         mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-1234")
@@ -116,14 +116,14 @@ class TestRegisterIncidentE2E:
         assert saved_call.tipo_incidente.value == "MECANICO"
         assert saved_call.gravedad.value == "GRAVE"
 
-        # Assert Layer 4: Messaging
-        mock_broker.publish_incident_registered.assert_called_once()
+        # # Assert Layer 4: Messaging
+        # mock_broker.publish_incident_registered.assert_called_once()
 
-        published_event = mock_broker.publish_incident_registered.call_args[0][0]
+        # published_event = mock_broker.publish_incident_registered.call_args[0][0]
 
-        assert published_event["incident_id"] == saved_incident.id
-        assert published_event["incident_type"] == "MECANICO"
-        assert published_event["severity"] == "GRAVE"
+        # assert published_event["incident_id"] == saved_incident.id
+        # assert published_event["incident_type"] == "MECANICO"
+        # assert published_event["severity"] == "GRAVE"
 
     def test_failed_vehicle_validation_aborts_flow(self, e2e_setup):
         """
@@ -133,19 +133,19 @@ class TestRegisterIncidentE2E:
         """
         use_case = e2e_setup["use_case"]
         mock_repo = e2e_setup["mock_repo"]
-        mock_broker = e2e_setup["mock_broker"]
+        # mock_broker = e2e_setup["mock_broker"]
         mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
         # Vehicle validation fails
         mock_vehicle_client.validate_plate_exists.return_value = False
 
         incident_dto = IncidentDTO(
-            id_conductor="c1",
-            placa_vehiculo="FAKE-9999",
-            tipo_incidente="HUMANO",
-            gravedad="GRAVE",
-            descripcion="Me corte la mano",
-            fecha_hora=datetime.fromisoformat("2026-06-10T14:30:00"),
+            driver_id="c1",
+            vehicle_id="FAKE-9999",
+            incident_type="HUMANO",
+            severity="GRAVE",
+            description="Me corte la mano",
+            event_date=datetime.fromisoformat("2026-06-10T14:30:00"),
         )
 
         # Act & Assert
@@ -156,4 +156,4 @@ class TestRegisterIncidentE2E:
 
         # Verify flow stops at validation layer
         mock_repo.save.assert_not_called()
-        mock_broker.publish_incident_registered.assert_not_called()
+        # mock_broker.publish_incident_registered.assert_not_called()

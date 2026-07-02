@@ -55,12 +55,12 @@ class TestQueryIncidentsUseCase:
         )
         mock_incident_repository.find_by_filters.return_value = [incident]
 
-        filters = QueryFiltersDTO(tipo_incidente="MECANICO")
+        filters = QueryFiltersDTO(incident_type="MECANICO")
 
         result = query_incidents_use_case.execute(filters)
 
         assert len(result) == 1
-        assert str(result[0].tipo_incidente) == "MECANICO"
+        assert str(result[0].incident_type) == "MECANICO"
 
     def test_execute_by_id_found(
         self, query_incidents_use_case, mock_incident_repository
@@ -76,7 +76,7 @@ class TestQueryIncidentsUseCase:
 
         result = query_incidents_use_case.execute_by_id(incident_id)
 
-        assert result.id == str(incident_id)
+        assert result.incident_id == str(incident_id)
 
     def test_execute_by_id_not_found(
         self, query_incidents_use_case, mock_incident_repository
