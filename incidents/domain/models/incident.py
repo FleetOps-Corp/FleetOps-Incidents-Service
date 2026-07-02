@@ -103,7 +103,7 @@ class Incident:
         tipo = IncidentType.from_string(tipo_incidente)
         sev = IncidentSeverity.from_string(gravedad)
         placa = PlateNumber(placa_vehiculo)
-        fecha = fecha_hora or datetime.utcnow()  # ← default to now if not provided
+        fecha = fecha_hora  # ← default to now if not provided
         incident_id = cls._generate_id(tipo, sev, fecha)
 
         return cls(
