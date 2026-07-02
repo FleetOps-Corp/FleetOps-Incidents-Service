@@ -4,10 +4,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from incidents.domain.models import Incident
-from incidents.domain.ports import IncidentRepository, MessageBrokerPort
-
-# from incidents.domain.events import IncidentRegisteredEvent
-
+from incidents.domain.ports import IncidentRepository
 
 class IncidentService:
     """
@@ -19,9 +16,7 @@ class IncidentService:
     - Incident querying with filters
     """
 
-    def __init__(
-        self, incident_repo: IncidentRepository
-    ):
+    def __init__(self, incident_repo: IncidentRepository):
         """
         Initialize service with repository and message broker adapters.
 
@@ -77,9 +72,6 @@ class IncidentService:
         # Persist
         saved_incident = self.incident_repo.save(incident)
 
-        # # Publish event for SAGA coordination
-        # self._publish_incident_registered_event(saved_incident)
-
         return saved_incident
 
     def query_incidents_by_filters(
@@ -128,17 +120,6 @@ class IncidentService:
         """
 
         assert incident.descripcion is not None
-
-        # event = IncidentRegisteredEvent(
-        #     incident_id=incident.id,
-        #     id_conductor=incident.id_conductor,
-        #     placa_vehiculo=incident.get_plate_str(),
-        #     tipo_incidente=incident.tipo_incidente.value,
-        #     gravedad=incident.gravedad.value,
-        #     descripcion=incident.descripcion,
-        #     fecha_evento=datetime.utcnow(),
-        # )
-        # self.message_broker.publish_incident_registered(event.to_dict())
 
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """Retrieve a single incident by ID."""

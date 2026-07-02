@@ -2,7 +2,6 @@
 
 from django.apps import AppConfig
 
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,9 +24,6 @@ class IncidentsConfig(AppConfig):
         from incidents.infrastructure.adapters.persistence.incident_repository import (
             DjangoIncidentRepository,
         )
-        from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
-            RabbitMQProducer,
-        )
         from incidents.domain.services import IncidentService, VehicleValidatorService
         from incidents.domain.ports import VehicleClientPort
 
@@ -42,13 +38,6 @@ class IncidentsConfig(AppConfig):
 
         # Layer 1: Driven adapters
         repo = DjangoIncidentRepository()
-
-        broker = RabbitMQProducer(
-            rabbitmq_host=os.getenv("RABBITMQ_HOST"),
-            rabbitmq_port=os.getenv("RABBITMQ_PORT"),
-            rabbitmq_user=os.getenv("RABBITMQ_USER"),
-            rabbitmq_password=os.getenv("RABBITMQ_PASSWORD"),
-        )
 
         # vehicle_client = VehicleClientWithCircuitBreaker(
         #     vehicles_api_url=os.getenv("VEHICLES_API_URL"),
