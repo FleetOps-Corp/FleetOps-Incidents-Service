@@ -337,4 +337,4 @@ After all tests pass successfully, the pipeline:
 3. Executes the unit test suite inside the container to verify that the application runs correctly in its deployment environment.
 ---
 
-**Generated:** June 10, 2026 | **Version:** 1.1.0
+**Generated:** July 1, 2026 | **Version:** 2.0
