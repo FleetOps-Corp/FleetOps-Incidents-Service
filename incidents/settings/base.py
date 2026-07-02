@@ -15,10 +15,7 @@ ALLOWED_HOSTS = ["*"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # In production, load from environment variable
-SECRET_KEY = os.getenv(
-    "DJANGO_SECRET_KEY",
-    "change-this-in-production-load-from-env-variable",
-)
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # Application definition
 INSTALLED_APPS = [
@@ -26,7 +23,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "rest_framework",
     "corsheaders",
-    # Your apps
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
 ]
 

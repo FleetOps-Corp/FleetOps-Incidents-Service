@@ -8,5 +8,4 @@ from .query_incidents_use_case import QueryIncidentsUseCase
 __all__ = [
     "RegisterIncidentUseCase",
     "QueryIncidentsUseCase",
-    #    "HandleSagaConfirmationUseCase",
 ]

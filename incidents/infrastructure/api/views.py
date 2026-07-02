@@ -69,12 +69,12 @@ def create_incident(request: Request) -> Response:
 
         # Convert to DTO
         incident_dto = IncidentDTO(
-            id_conductor=serializer.validated_data["id_conductor"],
-            placa_vehiculo=serializer.validated_data["placa_vehiculo"],
-            tipo_incidente=serializer.validated_data["tipo_incidente"],
-            gravedad=serializer.validated_data["gravedad"],
-            descripcion=serializer.validated_data.get("descripcion"),
-            fecha_hora=serializer.validated_data.get("fecha_hora"),
+            driver_id=serializer.validated_data["driver_id"],
+            vehicle_id=serializer.validated_data["vehicle_id"],
+            incident_type=serializer.validated_data["incident_type"],
+            severity=serializer.validated_data["severity"],
+            description=serializer.validated_data.get("description"),
+            event_date=serializer.validated_data.get("event_date"),
         )
 
         # Execute use case
@@ -86,7 +86,7 @@ def create_incident(request: Request) -> Response:
         # Serialize response
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
 
-        logger.info(f"Incident created: {response_dto.id}")
+        logger.info(f"Incident created: {response_dto.incident_id}")
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
     except VehicleValidationError as e:
@@ -151,12 +151,12 @@ def query_incidents(request: Request) -> Response:
 
         # Convert to DTO
         filters_dto = QueryFiltersDTO(
-            tipo_incidente=serializer.validated_data.get("tipo_incidente"),
-            gravedad=serializer.validated_data.get("gravedad"),
-            placa=serializer.validated_data.get("placa"),
-            id_conductor=serializer.validated_data.get("id_conductor"),
-            fecha_desde=serializer.validated_data.get("fecha_desde"),
-            fecha_hasta=serializer.validated_data.get("fecha_hasta"),
+            incident_type=serializer.validated_data.get("incident_type"),
+            severity=serializer.validated_data.get("severity"),
+            vehicle_id=serializer.validated_data.get("vehicle_id"),
+            driver_id=serializer.validated_data.get("driver_id"),
+            start_date=serializer.validated_data.get("start_date"),
+            end_date=serializer.validated_data.get("end_date"),
         )
         # Execute use case
         if query_incidents_uc is None:
