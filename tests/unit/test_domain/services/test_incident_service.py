@@ -103,15 +103,6 @@ class TestIncidentServiceRegister:
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
 
-        # # Assert
-        # mock_message_broker.publish_incident_registered.assert_called_once()
-        # call_args = mock_message_broker.publish_incident_registered.call_args
-        # event_data = call_args[0][0]
-
-        # assert event_data["incident_type"] == "MECANICO"
-        # assert event_data["severity"] == "GRAVE"
-        # assert event_data["event_type"] == "incident.registered"
-
 
 class TestIncidentServiceQuery:
     """Test IncidentService query methods."""

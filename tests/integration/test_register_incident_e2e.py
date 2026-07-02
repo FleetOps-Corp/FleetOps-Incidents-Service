@@ -13,9 +13,6 @@ from incidents.application.dtos import IncidentDTO
 from incidents.infrastructure.adapters.persistence.incident_repository import (
     DjangoIncidentRepository,
 )
-from incidents.infrastructure.adapters.messaging.rabbitmq_producer import (
-    RabbitMQProducer,
-)
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
@@ -42,7 +39,6 @@ class TestRegisterIncidentE2E:
         """Setup E2E test with mocked external services."""
         # Mock adapters
         mock_repo = Mock(spec=DjangoIncidentRepository)
-        # mock_broker = Mock(spec=RabbitMQProducer)
         mock_vehicle_client = Mock(spec=VehicleClientWithCircuitBreaker)
 
         # Domain services
@@ -55,7 +51,6 @@ class TestRegisterIncidentE2E:
         return {
             "use_case": use_case,
             "mock_repo": mock_repo,
-            # "mock_broker": mock_broker,
             "mock_vehicle_client": mock_vehicle_client,
         }
 
@@ -68,7 +63,6 @@ class TestRegisterIncidentE2E:
         # Arrange
         use_case = e2e_setup["use_case"]
         mock_repo = e2e_setup["mock_repo"]
-        # mock_broker = e2e_setup["mock_broker"]
         mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
         # 1. Vehicle validation succeeds
@@ -116,15 +110,6 @@ class TestRegisterIncidentE2E:
         assert saved_call.tipo_incidente.value == "MECANICO"
         assert saved_call.gravedad.value == "GRAVE"
 
-        # # Assert Layer 4: Messaging
-        # mock_broker.publish_incident_registered.assert_called_once()
-
-        # published_event = mock_broker.publish_incident_registered.call_args[0][0]
-
-        # assert published_event["incident_id"] == saved_incident.id
-        # assert published_event["incident_type"] == "MECANICO"
-        # assert published_event["severity"] == "GRAVE"
-
     def test_failed_vehicle_validation_aborts_flow(self, e2e_setup):
         """
         Given: Vehicle not registered
@@ -133,7 +118,6 @@ class TestRegisterIncidentE2E:
         """
         use_case = e2e_setup["use_case"]
         mock_repo = e2e_setup["mock_repo"]
-        # mock_broker = e2e_setup["mock_broker"]
         mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
         # Vehicle validation fails
@@ -156,4 +140,3 @@ class TestRegisterIncidentE2E:
 
         # Verify flow stops at validation layer
         mock_repo.save.assert_not_called()
-        # mock_broker.publish_incident_registered.assert_not_called()

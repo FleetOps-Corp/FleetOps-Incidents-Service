@@ -83,9 +83,6 @@ class TestCreateIncidentView:
             "event_date": "2026-06-10T14:30:00Z",
         }
 
-        # request = factory.post("/api/incidents/", request_data, format="json")
-        # request.user = Mock(is_authenticated=True)
-
         user = Mock()  # Crea un usuario ficticio
         request = factory.post("/api/incidents/", request_data, format="json")
         force_authenticate(request, user=user)  # Forzar el pase de autenticación de DRF
