@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop, JSRR, ggb, lssb, jpmh, jmb]
+    branches: [main, develop]
   pull_request:
-    branches: [main, develop, JSRR, ggb, lssb, jpmh, jmb]
+    branches: [main, develop]
 
 jobs:
   test:
