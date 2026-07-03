@@ -21,7 +21,7 @@ class TestQueryIncidentsUseCase:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC-1234",
+                "ABC-123",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -29,7 +29,7 @@ class TestQueryIncidentsUseCase:
             ),
             Incident.create(
                 "c2",
-                "XYZ-5678",
+                "XYZ-567",
                 "MECANICO",
                 "LEVE",
                 "El conductor se durmio",
@@ -53,7 +53,7 @@ class TestQueryIncidentsUseCase:
         """Given: Type filter, When: Execute, Then: Return filtered incidents."""
         incident = Incident.create(
             "c1",
-            "ABC-1234",
+            "ABC-123",
             "MECANICO",
             "GRAVE",
             "El conductor se enveneno",
@@ -75,7 +75,7 @@ class TestQueryIncidentsUseCase:
         incident_id = uuid4()
         incident = Incident.create(
             "c1",
-            "ABC-1234",
+            "ABC-123",
             "HUMANO",
             "GRAVE",
             "El conductor se enveneno",

@@ -24,7 +24,7 @@ class TestIncidentServiceRegister:
         """
         # Arrange
         id_conductor = "conductor-123"
-        placa = "ABC-1234"
+        placa = "ABC-123"
         tipo = "MECANICO"
         gravedad = "GRAVE"
         descripcion = "Engine failure"
@@ -87,7 +87,7 @@ class TestIncidentServiceRegister:
         # Arrange
         saved_incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
@@ -98,7 +98,7 @@ class TestIncidentServiceRegister:
         # Act
         incident_service.register_incident(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
@@ -115,7 +115,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC-1234",
+                "ABC-123",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -123,7 +123,7 @@ class TestIncidentServiceQuery:
             ),
             Incident.create(
                 "c2",
-                "XYZ-5678",
+                "XYZ-567",
                 "MECANICO",
                 "LEVE",
                 "El conductor se enveneno",
@@ -151,7 +151,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC-1234",
+                "ABC-123",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -181,13 +181,13 @@ class TestIncidentServiceQuery:
         incident_service.query_incidents_by_filters(
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
-            placa="ABC-1234",
+            placa="ABC-123",
         )
 
         mock_incident_repository.find_by_filters.assert_called_once_with(
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
-            placa="ABC-1234",
+            placa="ABC-123",
             id_conductor=None,
             fecha_desde=None,
             fecha_hasta=None,

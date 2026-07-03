@@ -72,7 +72,7 @@ class TestRegisterIncidentE2E:
         # 2. Repository persists incident
         saved_incident = Incident.create(
             id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",
@@ -84,7 +84,7 @@ class TestRegisterIncidentE2E:
         # Create DTO
         incident_dto = IncidentDTO(
             driver_id="conductor-123",
-            vehicle_id="ABC-1234",
+            vehicle_id="ABC-123",
             incident_type="MECANICO",
             severity="GRAVE",
             description="Engine failure",
@@ -102,7 +102,7 @@ class TestRegisterIncidentE2E:
         assert response_dto.incident_id.startswith("INC-")
 
         # Assert Layer 2: Domain
-        mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-1234")
+        mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-123")
 
         # Assert Layer 3: Persistence
         mock_repo.save.assert_called_once()
