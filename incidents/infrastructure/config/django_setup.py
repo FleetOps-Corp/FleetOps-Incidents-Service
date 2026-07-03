@@ -1,5 +1,7 @@
 """Django app configuration."""
 
+import os
+
 from django.apps import AppConfig
 from dotenv import load_dotenv
 
@@ -21,6 +23,9 @@ class IncidentsConfig(AppConfig):
         )
         from incidents.domain.ports import VehicleClientPort
         from incidents.domain.services import IncidentService, VehicleValidatorService
+        from incidents.infrastructure.adapters.messaging.sqs_publisher import (
+            SQSMessagePublisher,
+        )
         from incidents.infrastructure.adapters.persistence.incident_repository import (
             DjangoIncidentRepository,
         )
@@ -44,8 +49,13 @@ class IncidentsConfig(AppConfig):
 
         vehicle_client = DummyVehicleClient()
 
+        message_publisher = SQSMessagePublisher(
+            queue_url=os.getenv("SQS_QUEUE_URL"),
+            region_name=os.getenv("AWS_REGION"),
+        )
+
         # Layer 2: Domain services
-        incident_service = IncidentService(repo)
+        incident_service = IncidentService(repo, message_publisher)
         vehicle_validator = VehicleValidatorService(vehicle_client)
 
         # Layer 3: Use cases
