@@ -16,7 +16,10 @@ ALLOWED_HOSTS = ["*"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # In production, load from environment variable
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "change-this-in-production-load-from-env-variable",
+)
 
 # Application definition
 INSTALLED_APPS = [
