@@ -1,16 +1,19 @@
 """Test configuration and fixtures."""
 
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
+from incidents.application.use_cases import (
+    QueryIncidentsUseCase,
+    RegisterIncidentUseCase,
+)
 from incidents.domain.ports import (
     IncidentRepository,
+    MessagePublisherPort,
     VehicleClientPort,
 )
 from incidents.domain.services import IncidentService, VehicleValidatorService
-from incidents.application.use_cases import (
-    RegisterIncidentUseCase,
-    QueryIncidentsUseCase,
-)
 
 
 @pytest.fixture
@@ -20,15 +23,21 @@ def mock_incident_repository():
 
 
 @pytest.fixture
+def mock_message_publisher():
+    """Fixture: Mock message publisher."""
+    return Mock(spec=MessagePublisherPort)
+
+
+@pytest.fixture
 def mock_vehicle_client():
     """Fixture: Mock vehicle client."""
     return Mock(spec=VehicleClientPort)
 
 
 @pytest.fixture
-def incident_service(mock_incident_repository):
+def incident_service(mock_incident_repository, mock_message_publisher):
     """Fixture: Incident domain service with mocked adapters."""
-    return IncidentService(mock_incident_repository)
+    return IncidentService(mock_incident_repository, mock_message_publisher)
 
 
 @pytest.fixture

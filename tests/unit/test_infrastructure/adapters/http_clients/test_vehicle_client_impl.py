@@ -1,12 +1,13 @@
 """Unit tests for Vehicle HTTP client adapter with Circuit Breaker."""
 
-import pytest
 from unittest.mock import Mock, patch
 
+import pytest
+
+from incidents.domain.exceptions import VehicleNotRegisteredException
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
-from incidents.domain.exceptions import VehicleNotRegisteredException
 
 
 class TestVehicleClientWithCircuitBreaker:

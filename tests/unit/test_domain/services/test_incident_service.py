@@ -1,19 +1,21 @@
 """Unit tests for IncidentService domain service."""
 
-import pytest
 from datetime import datetime
-from incidents.domain.models import Incident
+
+import pytest
+
 from incidents.domain.exceptions import (
-    InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
+    InvalidIncidentTypeException,
 )
+from incidents.domain.models import Incident
 
 
 class TestIncidentServiceRegister:
     """Test IncidentService.register_incident workflow."""
 
     def test_register_incident_success(
-        self, incident_service, mock_incident_repository
+        self, incident_service, mock_incident_repository, mock_message_publisher
     ):
         """
         Given: Valid incident data
@@ -22,7 +24,7 @@ class TestIncidentServiceRegister:
         """
         # Arrange
         id_conductor = "conductor-123"
-        placa = "ABC-1234"
+        placa = "ABC-123"
         tipo = "MECANICO"
         gravedad = "GRAVE"
         descripcion = "Engine failure"
@@ -53,6 +55,10 @@ class TestIncidentServiceRegister:
         assert result == saved_incident
         mock_incident_repository.save.assert_called_once()
         # mock_message_broker.publish_incident_registered.assert_called_once()
+        mock_message_publisher.publish.assert_called_once_with(
+            event_type="incident_registered",
+            payload=saved_incident.to_dict(),
+        )
 
     def test_register_incident_invalid_type(self, incident_service):
         """Given: Invalid type, When: Register, Then: Raise exception."""
@@ -85,7 +91,7 @@ class TestIncidentServiceRegister:
         # Arrange
         saved_incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
@@ -96,12 +102,42 @@ class TestIncidentServiceRegister:
         # Act
         incident_service.register_incident(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="El conductor se enveneno",
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
+
+    def test_register_incident_returns_success_even_if_publish_fails(
+        self, incident_service, mock_incident_repository, mock_message_publisher
+    ):
+        """
+        Given: SQS publish raises an exception
+        When: Register incident
+        Then: Incident is still returned (publish failure does not propagate)
+        """
+        saved_incident = Incident.create(
+            id_conductor="c1",
+            placa_vehiculo="ABC-123",
+            tipo_incidente="MECANICO",
+            gravedad="GRAVE",
+            descripcion="Engine failure",
+            fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
+        )
+        mock_incident_repository.save.return_value = saved_incident
+        mock_message_publisher.publish.side_effect = Exception("SQS unavailable")
+
+        result = incident_service.register_incident(
+            id_conductor="c1",
+            placa_vehiculo="ABC-123",
+            tipo_incidente="MECANICO",
+            gravedad="GRAVE",
+            descripcion="Engine failure",
+            fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
+        )
+
+        assert result == saved_incident  # No exception propagated
 
 
 class TestIncidentServiceQuery:
@@ -113,7 +149,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC",
+                "ABC-123",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -121,7 +157,7 @@ class TestIncidentServiceQuery:
             ),
             Incident.create(
                 "c2",
-                "XYZ",
+                "XYZ-567",
                 "MECANICO",
                 "LEVE",
                 "El conductor se enveneno",
@@ -149,7 +185,7 @@ class TestIncidentServiceQuery:
         incidents = [
             Incident.create(
                 "c1",
-                "ABC",
+                "ABC-123",
                 "HUMANO",
                 "GRAVE",
                 "El conductor se enveneno",
@@ -179,13 +215,13 @@ class TestIncidentServiceQuery:
         incident_service.query_incidents_by_filters(
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
-            placa="ABC-1234",
+            placa="ABC-123",
         )
 
         mock_incident_repository.find_by_filters.assert_called_once_with(
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
-            placa="ABC-1234",
+            placa="ABC-123",
             id_conductor=None,
             fecha_desde=None,
             fecha_hasta=None,

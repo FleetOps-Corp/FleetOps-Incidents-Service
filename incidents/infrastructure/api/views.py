@@ -5,8 +5,8 @@ import logging
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
@@ -16,12 +16,12 @@ from incidents.application.exceptions import (
     VehicleValidationError,
 )
 from incidents.domain.exceptions import DomainException
+from incidents.infrastructure.adapters.logging import logger_factory
 from incidents.infrastructure.api.serializers import (
+    IncidentQuerySerializer,
     IncidentRequestSerializer,
     IncidentResponseSerializer,
-    IncidentQuerySerializer,
 )
-from incidents.infrastructure.adapters.logging import logger_factory
 
 logger = logger_factory.LoggerFactory().get_logger(__name__)
 

@@ -5,8 +5,8 @@ from datetime import datetime
 from uuid import uuid4
 
 from incidents.domain.models.value_objects import (
-    IncidentType,
     IncidentSeverity,
+    IncidentType,
     PlateNumber,
 )
 

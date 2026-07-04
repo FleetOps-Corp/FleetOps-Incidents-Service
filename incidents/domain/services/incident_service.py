@@ -1,10 +1,11 @@
 """Incident Domain Service - Core business logic orchestration."""
 
+import logging
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from incidents.domain.models import Incident
-from incidents.domain.ports import IncidentRepository
+from incidents.domain.ports import IncidentRepository, MessagePublisherPort
 
 
 class IncidentService:
@@ -17,15 +18,18 @@ class IncidentService:
     - Incident querying with filters
     """
 
-    def __init__(self, incident_repo: IncidentRepository):
+    def __init__(
+        self, incident_repo: IncidentRepository, message_publisher: MessagePublisherPort
+    ):
         """
-        Initialize service with repository and message broker adapters.
+        Initialize service with repository and message publisher adapters.
 
         Args:
             incident_repo: Implementation of IncidentRepository
-            message_broker: Implementation of MessageBrokerPort
+            message_publisher: Implementation of MessagePublisherPort
         """
         self.incident_repo = incident_repo
+        self.message_publisher = message_publisher
 
     def register_incident(
         self,
@@ -73,6 +77,12 @@ class IncidentService:
         # Persist
         saved_incident = self.incident_repo.save(incident)
 
+        # Publish event for SAGA coordination.
+        # Business decision: a publishing failure must NOT block the
+        # transactional flow. The incident is already persisted and the
+        # API must still return 201.
+        self._publish_incident_registered_event(saved_incident)
+
         return saved_incident
 
     def query_incidents_by_filters(
@@ -116,11 +126,21 @@ class IncidentService:
         - Mantenimiento: schedules maintenance (if grave + mecanico)
         - Asignaciones: handles reassignment or delay notification
 
+        Failures are logged but NOT re-raised: publishing is best-effort
+        and must not affect the transactional response to the client.
+
         Args:
             incident: The incident to publish
         """
-
-        assert incident.descripcion is not None
+        try:
+            self.message_publisher.publish(
+                event_type="incident_registered",
+                payload=incident.to_dict(),
+            )
+        except Exception as e:
+            logging.exception(
+                f"Failed to publish incident_registered event for {incident.id}: {str(e)}"
+            )
 
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """Retrieve a single incident by ID."""

@@ -2,14 +2,14 @@
 
 import logging
 
-from incidents.domain.services import IncidentService, VehicleValidatorService
-from incidents.domain.models import Incident
+from incidents.application.dtos import IncidentDTO, IncidentResponseDTO
+from incidents.application.exceptions import VehicleValidationError
 from incidents.domain.exceptions import (
     DomainException,
     VehicleNotRegisteredException,
 )
-from incidents.application.dtos import IncidentDTO, IncidentResponseDTO
-from incidents.application.exceptions import VehicleValidationError
+from incidents.domain.models import Incident
+from incidents.domain.services import IncidentService, VehicleValidatorService
 
 
 class RegisterIncidentUseCase:
