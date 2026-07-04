@@ -9,6 +9,9 @@ django-cors-headers==4.3.1
 # Database
 psycopg2-binary==2.9.9
 
+# API documentation
+drf-spectacular==0.27.2
+
 # HTTP Client with Circuit Breaker
 pybreaker==1.0.1
 requests==2.32.3
@@ -37,3 +40,5 @@ mypy
 django-stubs==5.2.1
 django-stubs-ext==5.2.1
 djangorestframework-stubs==3.16.1
+
+drf-spectacular
