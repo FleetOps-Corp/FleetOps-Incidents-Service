@@ -10,10 +10,9 @@ from incidents.application.use_cases import (
 )
 from incidents.domain.ports import (
     IncidentRepository,
-     MessagePublisherPort,
+    MessagePublisherPort,
     VehicleClientPort,
 )
-
 from incidents.domain.services import IncidentService, VehicleValidatorService
 
 

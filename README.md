@@ -136,6 +136,12 @@ mypy .
 ruff check .
 ```
 
+if theres fixable errors with ruff run the following command
+
+```bash
+ruff check --fix
+```
+
 ### Black check
 
 ```bash

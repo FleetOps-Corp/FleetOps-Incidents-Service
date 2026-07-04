@@ -18,7 +18,9 @@ class IncidentService:
     - Incident querying with filters
     """
 
-    def __init__(self, incident_repo: IncidentRepository, message_publisher: MessagePublisherPort):
+    def __init__(
+        self, incident_repo: IncidentRepository, message_publisher: MessagePublisherPort
+    ):
         """
         Initialize service with repository and message publisher adapters.
 

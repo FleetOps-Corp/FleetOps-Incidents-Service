@@ -109,7 +109,6 @@ class TestIncidentServiceRegister:
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
 
-
     def test_register_incident_returns_success_even_if_publish_fails(
         self, incident_service, mock_incident_repository, mock_message_publisher
     ):
@@ -120,7 +119,7 @@ class TestIncidentServiceRegister:
         """
         saved_incident = Incident.create(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",
@@ -131,7 +130,7 @@ class TestIncidentServiceRegister:
 
         result = incident_service.register_incident(
             id_conductor="c1",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",

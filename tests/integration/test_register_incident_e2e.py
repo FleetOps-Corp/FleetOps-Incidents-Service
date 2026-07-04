@@ -8,6 +8,7 @@ import pytest
 from incidents.application.dtos import IncidentDTO
 from incidents.application.use_cases import RegisterIncidentUseCase
 from incidents.domain.models import Incident
+from incidents.domain.ports import MessagePublisherPort
 
 # from uuid import uuid4
 # from incidents.domain.models import Incident
@@ -41,9 +42,11 @@ class TestRegisterIncidentE2E:
         # Mock adapters
         mock_repo = Mock(spec=DjangoIncidentRepository)
         mock_vehicle_client = Mock(spec=VehicleClientWithCircuitBreaker)
+        mock_message_publisher = Mock(spec=MessagePublisherPort)
+
+        incident_service = IncidentService(mock_repo, mock_message_publisher)
 
         # Domain services
-        incident_service = IncidentService(mock_repo)
         vehicle_validator = VehicleValidatorService(mock_vehicle_client)
 
         # Application use case
@@ -53,6 +56,7 @@ class TestRegisterIncidentE2E:
             "use_case": use_case,
             "mock_repo": mock_repo,
             "mock_vehicle_client": mock_vehicle_client,
+            "mock_message_publisher": mock_message_publisher,
         }
 
     def test_complete_incident_registration_flow(self, e2e_setup):
