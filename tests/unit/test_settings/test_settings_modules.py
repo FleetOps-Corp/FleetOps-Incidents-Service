@@ -93,6 +93,13 @@ class TestSettingsModules:
             "service": "incidents",
         }
 
+    def test_health_check_rejects_post_requests(self):
+        request = RequestFactory().post("/health")
+
+        response = health_check(request)
+
+        assert response.status_code == 405
+
     def test_health_urlpattern_is_registered(self):
         health_pattern = incidents_urls.urlpatterns[0]
 
