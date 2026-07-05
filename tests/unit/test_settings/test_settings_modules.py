@@ -8,6 +8,7 @@ from unittest.mock import Mock
 from django.test import RequestFactory
 
 import incidents
+import incidents.urls as incidents_urls
 from incidents.urls import health_check
 
 
@@ -91,6 +92,12 @@ class TestSettingsModules:
             "status": "ok",
             "service": "incidents",
         }
+
+    def test_health_urlpattern_is_registered(self):
+        health_pattern = incidents_urls.urlpatterns[0]
+
+        assert str(health_pattern.pattern) == "health"
+        assert health_pattern.name == "health_check"
 
     def test_wsgi_module_sets_default_settings_and_exposes_application(
         self, monkeypatch
