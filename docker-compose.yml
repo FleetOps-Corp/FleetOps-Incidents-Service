@@ -30,7 +30,7 @@ services:
       dockerfile: Dockerfile
     container_name: incidents-service
     environment:
-      DJANGO_SETTINGS_MODULE: incidents.settings.development
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: ${DB_NAME}
@@ -38,7 +38,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      VEHICLES_API_URL: http://vehicles-service:8000
+      VEHICLES_API_URL: ${VEHICLES_API_URL}
       LOG_LEVEL: INFO
     ports:
       - "8000:8000"
@@ -61,7 +61,6 @@ services:
 
 volumes:
   postgres_data:
-  # rabbitmq_data:
 
 networks:
   incidents-network:
