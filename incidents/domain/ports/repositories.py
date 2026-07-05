@@ -1,8 +1,8 @@
 """Repository Port - Hexagonal interface for incident persistence."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from incidents.domain.models import Incident
 

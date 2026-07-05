@@ -2,10 +2,10 @@
 
 from typing import List
 
-from incidents.domain.services import IncidentService
-from incidents.domain.models import Incident
 from incidents.application.dtos import IncidentResponseDTO, QueryFiltersDTO
 from incidents.application.exceptions import IncidentNotFoundApplicationError
+from incidents.domain.models import Incident
+from incidents.domain.services import IncidentService
 
 
 class QueryIncidentsUseCase:

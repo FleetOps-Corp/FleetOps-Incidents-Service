@@ -2,15 +2,17 @@
 
 ## Overview
 
-**Incidents Microservice** is a production-grade backend service for managing vehicle and driver incidents within the FleetOps platform. It implements a **Hexagonal (Ports & Adapters) architecture** with 100% unit test coverage, asynchronous event-driven coordination, and resilience patterns.
+**Incidents Microservice** is a production-grade backend service for managing vehicle and driver incidents within the FleetOps platform. It implements a **Hexagonal (Ports & Adapters) architecture** with unit test coverage, asynchronous event-driven coordination, and resilience patterns.
 
-The service centralizes incident registration, validation, querying, and SAGA-based coordination with downstream microservices (Vehicles, Mantenimiento, Asignaciones).
+The service centralizes incident registration, validation, querying
 
 **Built With:** Python 3.11, Django 4.2 LTS, PostgreSQL 16, Docker
 
 ---
 
 ## Architecture
+
+Revisar
 
 ### Architectural Style: Hexagonal (Ports & Adapters)
 
@@ -27,6 +29,8 @@ The microservice isolates **pure domain logic** from external technologies:
 **DDD (Domain-Driven Design)** - Aggregate roots, value objects, domain events
 
 ### Quality Attributes (ISO/IEC 25010)
+
+Revisar 
 
 | Attribute | Priority | Implementation |
 | :--- | :--- | :--- |
@@ -119,6 +123,8 @@ python manage.py migrate
 
 ## Running Tests
 
+Before commiting or open pr to develop and main branches, run the following commands to check the quality of it
+
 ### Mypy check
 
 ```bash
@@ -129,6 +135,12 @@ mypy .
 
 ```bash
 ruff check .
+```
+
+if theres fixable errors with ruff run the following command
+
+```bash
+ruff check --fix
 ```
 
 ### Black check
@@ -173,6 +185,14 @@ open htmlcov/index.html
 
 # Enforce minimum coverage
 coverage report --fail-under=95
+```
+
+### Sonarqube analysis
+
+the following command runs an analysis on sonarqube, when the analysis is done can be checked in the next link: https://sonarcloud.io/project/overview?id=FleetOps-Corp_FleetOps-Incidents-Service 
+
+```bash
+docker run --rm   -e SONAR_TOKEN="env.SONAR_TOKEN"   -v "$(pwd):/usr/src"   sonarsource/sonar-scanner-cli
 ```
 
 ---
@@ -316,9 +336,9 @@ This project uses **GitHub Actions** to automate code quality verification, test
 The CI workflow performs the following tasks:
 
 1. Checks out the project source code.
-2. Sets up a Python 3.11 environment.
-3. Installs all project dependencies.
-4. Starts a temporary PostgreSQL service for testing.
+2. Sets up a **Python 3.11** environment.
+3. Installs all project dependencies defined in `requirements.txt`.
+4. Starts a temporary **PostgreSQL** service for integration testing.
 5. Performs static code analysis using:
    - Ruff
    - MyPy
@@ -326,8 +346,9 @@ The CI workflow performs the following tasks:
 6. Executes:
    - Unit tests
    - Integration tests
-7. Generates a code coverage report.
-8. Uploads coverage results to Codecov.
+7. Generates code coverage reports in XML and HTML formats.
+8. Uploads the coverage report to **Codecov**.
+9. Runs a **SonarCloud** scan to analyze code quality, maintainability, and potential security issues.
 
 ### Docker Validation
 

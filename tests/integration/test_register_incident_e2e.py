@@ -1,22 +1,24 @@
 """End-to-End integration test - Complete transactional flow."""
 
-import pytest
 from datetime import datetime
 from unittest.mock import Mock
 
-# from uuid import uuid4
+import pytest
 
+from incidents.application.dtos import IncidentDTO
+from incidents.application.use_cases import RegisterIncidentUseCase
+from incidents.domain.models import Incident
+from incidents.domain.ports import MessagePublisherPort
+
+# from uuid import uuid4
 # from incidents.domain.models import Incident
 from incidents.domain.services import IncidentService, VehicleValidatorService
-from incidents.application.use_cases import RegisterIncidentUseCase
-from incidents.application.dtos import IncidentDTO
-from incidents.infrastructure.adapters.persistence.incident_repository import (
-    DjangoIncidentRepository,
-)
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
-from incidents.domain.models import Incident
+from incidents.infrastructure.adapters.persistence.incident_repository import (
+    DjangoIncidentRepository,
+)
 
 
 class TestRegisterIncidentE2E:
@@ -40,9 +42,11 @@ class TestRegisterIncidentE2E:
         # Mock adapters
         mock_repo = Mock(spec=DjangoIncidentRepository)
         mock_vehicle_client = Mock(spec=VehicleClientWithCircuitBreaker)
+        mock_message_publisher = Mock(spec=MessagePublisherPort)
+
+        incident_service = IncidentService(mock_repo, mock_message_publisher)
 
         # Domain services
-        incident_service = IncidentService(mock_repo)
         vehicle_validator = VehicleValidatorService(mock_vehicle_client)
 
         # Application use case
@@ -52,6 +56,7 @@ class TestRegisterIncidentE2E:
             "use_case": use_case,
             "mock_repo": mock_repo,
             "mock_vehicle_client": mock_vehicle_client,
+            "mock_message_publisher": mock_message_publisher,
         }
 
     def test_complete_incident_registration_flow(self, e2e_setup):
@@ -71,7 +76,7 @@ class TestRegisterIncidentE2E:
         # 2. Repository persists incident
         saved_incident = Incident.create(
             id_conductor="conductor-123",
-            placa_vehiculo="ABC-1234",
+            placa_vehiculo="ABC-123",
             tipo_incidente="MECANICO",
             gravedad="GRAVE",
             descripcion="Engine failure",
@@ -83,7 +88,7 @@ class TestRegisterIncidentE2E:
         # Create DTO
         incident_dto = IncidentDTO(
             driver_id="conductor-123",
-            vehicle_id="ABC-1234",
+            vehicle_id="ABC-123",
             incident_type="MECANICO",
             severity="GRAVE",
             description="Engine failure",
@@ -101,7 +106,7 @@ class TestRegisterIncidentE2E:
         assert response_dto.incident_id.startswith("INC-")
 
         # Assert Layer 2: Domain
-        mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-1234")
+        mock_vehicle_client.validate_plate_exists.assert_called_once_with("ABC-123")
 
         # Assert Layer 3: Persistence
         mock_repo.save.assert_called_once()

@@ -1,14 +1,7 @@
 """Root URL configuration."""
 
-from django.urls import path, include
-from django.http import JsonResponse
-
-
-def health_check(request):
-    return JsonResponse({"status": "ok", "service": "incidents"})
-
+from django.urls import include, path
 
 urlpatterns = [
-    path("health", health_check, name="health_check"),
     path("api/", include("incidents.infrastructure.api.urls")),
 ]

@@ -59,19 +59,19 @@ class PlateNumber:
         if not self._is_valid_format():
             raise InvalidPlateNumberException(
                 f"Invalid plate format: {self.value}. "
-                "Expected format: ABC-1234 or similar."
+                "Expected format: ABC-123 or similar."
             )
 
     def _is_valid_format(self) -> bool:
         """
         Validate plate format.
-        Allows standard formats: ABC-1234 or ABC1234.
+        Allows standard formats: ABC-123 or ABC123.
         """
         if not self.value or not isinstance(self.value, str):
             return False
 
-        # Three letters, optional dash, four digits.
-        pattern = r"^[A-Z]{3}-?\d{4}$"
+        # Three letters, optional dash, three digits.
+        pattern = r"^[A-Z]{3}-?\d{3}$"
 
         return bool(re.match(pattern, self.value.upper()))
 

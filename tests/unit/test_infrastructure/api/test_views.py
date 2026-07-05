@@ -1,9 +1,9 @@
 """Unit tests for REST API views."""
 
-import pytest
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+import pytest
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
@@ -168,6 +168,23 @@ class TestCreateIncidentView:
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.data == {"error": "Internal server error"}
 
+    def test_create_incident_without_use_case(self, factory):
+        request_data = {
+            "driver_id": "conductor-123",
+            "vehicle_id": "ABC-1234",
+            "incident_type": "MECANICO",
+            "severity": "GRAVE",
+            "description": "Engine failure",
+            "event_date": "2026-06-10T14:30:00Z",
+        }
+
+        views.set_use_cases(None, None)
+        request = factory.post("/api/incidents/", request_data, format="json")
+
+        response = views.create_incident(request)
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+
     def test_query_incidents_success(self, factory):
         views.query_incidents_uc.execute.return_value = [
             SimpleNamespace(
@@ -208,6 +225,14 @@ class TestCreateIncidentView:
 
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    def test_query_incidents_without_use_case(self, factory):
+        views.set_use_cases(Mock(), None)
+        request = factory.get("/api/incidents/")
+
+        response = views.query_incidents(request)
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+
     def test_get_incident_success(self, factory):
         dto = IncidentResponseDTO(
             incident_id="1",
@@ -237,6 +262,14 @@ class TestCreateIncidentView:
 
     def test_get_incident_not_found(self, factory):
         views.query_incidents_uc.execute_by_id.side_effect = Exception("missing")
+
+        request = factory.get("/api/incidents/1/")
+        response = views.get_incident(request, "1")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_get_incident_without_use_case(self, factory):
+        views.set_use_cases(Mock(), None)
 
         request = factory.get("/api/incidents/1/")
         response = views.get_incident(request, "1")
