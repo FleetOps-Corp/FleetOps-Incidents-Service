@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+TESTING = False
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
