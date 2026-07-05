@@ -23,26 +23,6 @@ services:
     networks:
       - incidents-network
 
-  # RabbitMQ Message Broker
-  rabbitmq:
-    image: rabbitmq:3.13-management-alpine
-    container_name: incidents-rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - incidents-network
-
   # Incidents Microservice
   incidents-service:
     build:
@@ -50,7 +30,7 @@ services:
       dockerfile: Dockerfile
     container_name: incidents-service
     environment:
-      DJANGO_SETTINGS_MODULE: incidents.settings.development
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: ${DB_NAME}
@@ -58,18 +38,12 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
-      VEHICLES_API_URL: http://vehicles-service:8000
+      VEHICLES_API_URL: ${VEHICLES_API_URL}
       LOG_LEVEL: INFO
     ports:
       - "8000:8000"
     depends_on:
       postgres:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     volumes:
       - .:/app
@@ -87,7 +61,6 @@ services:
 
 volumes:
   postgres_data:
-  rabbitmq_data:
 
 networks:
   incidents-network:

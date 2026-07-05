@@ -1,10 +1,12 @@
 """REST API Views - Endpoint handlers for incident operations."""
 
+import logging
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.response import Response
 
 from incidents.application.dtos import IncidentDTO, QueryFiltersDTO
 from incidents.application.exceptions import (
@@ -12,17 +14,19 @@ from incidents.application.exceptions import (
     VehicleValidationError,
 )
 from incidents.domain.exceptions import DomainException
+from incidents.infrastructure.adapters.logging import logger_factory
 from incidents.infrastructure.api.serializers import (
+    IncidentQuerySerializer,
     IncidentRequestSerializer,
     IncidentResponseSerializer,
-    IncidentQuerySerializer,
 )
-from incidents.infrastructure.adapters.logging import logger_factory
 
 logger = logger_factory.LoggerFactory().get_logger(__name__)
 
 register_incident_uc = None
 query_incidents_uc = None
+
+use_case_not_registered = "Use case not registered"
 
 
 def set_use_cases(register_uc, query_uc):
@@ -69,24 +73,24 @@ def create_incident(request: Request) -> Response:
 
         # Convert to DTO
         incident_dto = IncidentDTO(
-            id_conductor=serializer.validated_data["id_conductor"],
-            placa_vehiculo=serializer.validated_data["placa_vehiculo"],
-            tipo_incidente=serializer.validated_data["tipo_incidente"],
-            gravedad=serializer.validated_data["gravedad"],
-            descripcion=serializer.validated_data.get("descripcion"),
-            fecha_hora=serializer.validated_data.get("fecha_hora"),
+            driver_id=serializer.validated_data["driver_id"],
+            vehicle_id=serializer.validated_data["vehicle_id"],
+            incident_type=serializer.validated_data["incident_type"],
+            severity=serializer.validated_data["severity"],
+            description=serializer.validated_data.get("description"),
+            event_date=serializer.validated_data.get("event_date"),
         )
 
         # Execute use case
         if register_incident_uc is None:
-            raise RuntimeError("Use case not configured")
+            raise RuntimeError(use_case_not_registered)
 
         response_dto = register_incident_uc.execute(incident_dto)
 
         # Serialize response
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
 
-        logger.info(f"Incident created: {response_dto.id}")
+        logger.info(f"Incident created: {response_dto.incident_id}")
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
     except VehicleValidationError as e:
@@ -104,14 +108,14 @@ def create_incident(request: Request) -> Response:
         )
 
     except ApplicationException as e:
-        logger.error(f"Application exception: {str(e)}")
+        logging.exception(f"Application exception: {str(e)}")
         return Response(
             {"error": str(e), "code": e.code},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     except Exception as e:
-        logger.error(f"Unexpected error in create_incident: {str(e)}")
+        logging.exception(f"Unexpected error in create_incident: {str(e)}")
         return Response(
             {"error": "Internal server error"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -151,12 +155,12 @@ def query_incidents(request: Request) -> Response:
 
         # Convert to DTO
         filters_dto = QueryFiltersDTO(
-            tipo_incidente=serializer.validated_data.get("tipo_incidente"),
-            gravedad=serializer.validated_data.get("gravedad"),
-            placa=serializer.validated_data.get("placa"),
-            id_conductor=serializer.validated_data.get("id_conductor"),
-            fecha_desde=serializer.validated_data.get("fecha_desde"),
-            fecha_hasta=serializer.validated_data.get("fecha_hasta"),
+            incident_type=serializer.validated_data.get("incident_type"),
+            severity=serializer.validated_data.get("severity"),
+            vehicle_id=serializer.validated_data.get("vehicle_id"),
+            driver_id=serializer.validated_data.get("driver_id"),
+            start_date=serializer.validated_data.get("start_date"),
+            end_date=serializer.validated_data.get("end_date"),
         )
         # Execute use case
         if query_incidents_uc is None:
@@ -171,14 +175,14 @@ def query_incidents(request: Request) -> Response:
         return Response(response_data, status=status.HTTP_200_OK)
 
     except ApplicationException as e:
-        logger.error(f"Application exception: {str(e)}")
+        logging.exception(f"Application exception: {str(e)}")
         return Response(
             {"error": str(e), "code": e.code},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     except Exception as e:
-        logger.error(f"Unexpected error in query_incidents: {str(e)}")
+        logging.exception(f"Unexpected error in query_incidents: {str(e)}")
         return Response(
             {"error": "Internal server error"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -202,7 +206,7 @@ def get_incident(request: Request, incident_id: str) -> Response:
     """
     try:
         if query_incidents_uc is None:
-            raise RuntimeError("Use case not configured")
+            raise RuntimeError(use_case_not_registered)
         response_dto = query_incidents_uc.execute_by_id(incident_id)
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
         return Response(response_serializer.data, status=status.HTTP_200_OK)
@@ -214,7 +218,7 @@ def get_incident(request: Request, incident_id: str) -> Response:
         )
 
     except Exception as e:
-        logger.error(f"Error retrieving incident: {str(e)}")
+        logging.exception(f"Error retrieving incident: {str(e)}")
         return Response(
             {"error": "Incident not found"},
             status=status.HTTP_404_NOT_FOUND,

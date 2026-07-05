@@ -2,10 +2,12 @@
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
+TESTING = False
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -26,7 +28,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "rest_framework",
     "corsheaders",
-    # Your apps
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
 ]
 
@@ -37,6 +38,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "incidents.urls"
+WSGI_APPLICATION = "incidents.wsgi.application"
 
 TEMPLATES = [
     {
@@ -108,3 +110,6 @@ USE_TZ = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Environment flag used by infrastructure bootstrap code.
+TESTING = False

@@ -2,10 +2,11 @@
 
 import os
 
-from .base import *  # noqa: F403
+from .base import *
 
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
+TESTING = True
 
 # Override for development
 DATABASES["default"]["HOST"] = os.getenv("DB_HOST")  # noqa: F405

@@ -13,12 +13,12 @@ class QueryFiltersDTO:
     Encapsulates all possible filters for incident searches.
     """
 
-    tipo_incidente: Optional[str] = None
-    gravedad: Optional[str] = None
-    placa: Optional[str] = None
-    id_conductor: Optional[str] = None
-    fecha_desde: Optional[datetime] = None
-    fecha_hasta: Optional[datetime] = None
+    incident_type: Optional[str] = None
+    severity: Optional[str] = None
+    vehicle_id: Optional[str] = None
+    driver_id: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
 
     def to_dict(self) -> dict:
         """Convert to dictionary, excluding None values."""

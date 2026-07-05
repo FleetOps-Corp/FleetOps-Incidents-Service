@@ -1,7 +1,7 @@
 """Vehicle Client Port - Hexagonal interface for Vehicles microservice interaction."""
 
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 
 class VehicleClientPort(ABC):

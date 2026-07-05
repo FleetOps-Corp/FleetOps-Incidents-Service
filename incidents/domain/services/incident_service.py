@@ -1,11 +1,11 @@
 """Incident Domain Service - Core business logic orchestration."""
 
+import logging
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from incidents.domain.models import Incident
-from incidents.domain.ports import IncidentRepository, MessageBrokerPort
-from incidents.domain.events import IncidentRegisteredEvent
+from incidents.domain.ports import IncidentRepository, MessagePublisherPort
 
 
 class IncidentService:
@@ -19,17 +19,17 @@ class IncidentService:
     """
 
     def __init__(
-        self, incident_repo: IncidentRepository, message_broker: MessageBrokerPort
+        self, incident_repo: IncidentRepository, message_publisher: MessagePublisherPort
     ):
         """
-        Initialize service with repository and message broker adapters.
+        Initialize service with repository and message publisher adapters.
 
         Args:
             incident_repo: Implementation of IncidentRepository
-            message_broker: Implementation of MessageBrokerPort
+            message_publisher: Implementation of MessagePublisherPort
         """
         self.incident_repo = incident_repo
-        self.message_broker = message_broker
+        self.message_publisher = message_publisher
 
     def register_incident(
         self,
@@ -77,7 +77,10 @@ class IncidentService:
         # Persist
         saved_incident = self.incident_repo.save(incident)
 
-        # Publish event for SAGA coordination
+        # Publish event for SAGA coordination.
+        # Business decision: a publishing failure must NOT block the
+        # transactional flow. The incident is already persisted and the
+        # API must still return 201.
         self._publish_incident_registered_event(saved_incident)
 
         return saved_incident
@@ -114,23 +117,6 @@ class IncidentService:
             fecha_hasta=fecha_hasta,
         )
 
-    # def update_incident_to_gestion(self, incident_id) -> Incident:
-    #     """
-    #     Transition incident to EN_GESTION state.
-
-    #     Called after SAGA confirmation from all microservices.
-
-    #     Args:
-    #         incident_id: UUID of incident to update
-
-    #     Returns:
-    #         Incident: Updated incident
-    #     """
-    #     incident = self.incident_repo.update_estado(
-    #         incident_id, nuevo_estado="EN_GESTION"
-    #     )
-    #     return incident
-
     def _publish_incident_registered_event(self, incident: Incident) -> None:
         """
         Publish incident_registered event for SAGA orchestration.
@@ -140,22 +126,21 @@ class IncidentService:
         - Mantenimiento: schedules maintenance (if grave + mecanico)
         - Asignaciones: handles reassignment or delay notification
 
+        Failures are logged but NOT re-raised: publishing is best-effort
+        and must not affect the transactional response to the client.
+
         Args:
             incident: The incident to publish
         """
-
-        assert incident.descripcion is not None
-
-        event = IncidentRegisteredEvent(
-            incident_id=incident.id,
-            id_conductor=incident.id_conductor,
-            placa_vehiculo=incident.get_plate_str(),
-            tipo_incidente=incident.tipo_incidente.value,
-            gravedad=incident.gravedad.value,
-            descripcion=incident.descripcion,
-            fecha_evento=datetime.utcnow(),
-        )
-        self.message_broker.publish_incident_registered(event.to_dict())
+        try:
+            self.message_publisher.publish(
+                event_type="incident_registered",
+                payload=incident.to_event(),
+            )
+        except Exception as e:
+            logging.exception(
+                f"Failed to publish incident_registered event for {incident.id}: {str(e)}"
+            )
 
     def find_by_id(self, incident_id: str) -> Optional[Incident]:
         """Retrieve a single incident by ID."""
