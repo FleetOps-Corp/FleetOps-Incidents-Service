@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,7 +27,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "rest_framework",
     "corsheaders",
-    # Your apps
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
 ]
 

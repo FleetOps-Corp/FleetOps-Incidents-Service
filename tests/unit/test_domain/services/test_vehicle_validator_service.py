@@ -1,6 +1,7 @@
 """Unit tests for VehicleValidatorService."""
 
 import pytest
+
 from incidents.domain.exceptions import VehicleNotRegisteredException
 
 

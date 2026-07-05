@@ -1,11 +1,12 @@
 """Value Objects - Immutable objects representing domain concepts."""
 
-from enum import Enum
+import re
 from dataclasses import dataclass
+from enum import Enum
 
 from incidents.domain.exceptions import (
-    InvalidIncidentTypeException,
     InvalidIncidentSeverityException,
+    InvalidIncidentTypeException,
     InvalidPlateNumberException,
 )
 
@@ -57,18 +58,22 @@ class PlateNumber:
         """Validate plate format on instantiation."""
         if not self._is_valid_format():
             raise InvalidPlateNumberException(
-                f"Invalid plate format: {self.value}. Expected format: ABC-1234 or similar."
+                f"Invalid plate format: {self.value}. "
+                "Expected format: ABC-123 or similar."
             )
 
-    @staticmethod
-    def _is_valid_format() -> bool:
+    def _is_valid_format(self) -> bool:
         """
         Validate plate format.
-        Allows standard formats: ABC-1234, ABC1234, etc.
+        Allows standard formats: ABC-123 or ABC123.
         """
-        # Simple validation: non-empty, alphanumeric with optional dash
-        # Can be enhanced with regex if needed
-        return True  # Flexible validation for international formats
+        if not self.value or not isinstance(self.value, str):
+            return False
+
+        # Three letters, optional dash, three digits.
+        pattern = r"^[A-Z]{3}-?\d{3}$"
+
+        return bool(re.match(pattern, self.value.upper()))
 
     def __str__(self) -> str:
         """Return string representation of plate."""

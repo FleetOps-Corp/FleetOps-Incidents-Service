@@ -2,11 +2,11 @@
 
 from .domain_exceptions import (
     DomainException,
-    InvalidIncidentTypeException,
+    IncidentNotFoundError,
     InvalidIncidentSeverityException,
+    InvalidIncidentTypeException,
     InvalidPlateNumberException,
     VehicleNotRegisteredException,
-    IncidentNotFoundError,
 )
 
 __all__ = [

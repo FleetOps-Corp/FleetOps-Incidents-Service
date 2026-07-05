@@ -1,1 +1,0 @@
-"""Messaging adapter tests initialization."""

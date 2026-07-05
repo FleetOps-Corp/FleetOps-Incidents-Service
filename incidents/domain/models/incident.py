@@ -2,12 +2,11 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 from uuid import uuid4
 
 from incidents.domain.models.value_objects import (
-    IncidentType,
     IncidentSeverity,
+    IncidentType,
     PlateNumber,
 )
 
@@ -35,7 +34,7 @@ class Incident:
     gravedad: IncidentSeverity
 
     # Content
-    descripcion: Optional[str]  # ← fix: was str, should be Optional
+    descripcion: str
 
     # Identity (generated, so goes after required fields)
     id: str = field(default="")  # ← changed: now str, generated in create()
@@ -76,8 +75,8 @@ class Incident:
         placa_vehiculo: str,
         tipo_incidente: str,
         gravedad: str,
-        descripcion: Optional[str],  # ← fix: Optional
-        fecha_hora: Optional[datetime],  # ← fix: Optional, defaults to now
+        descripcion: str,
+        fecha_hora: datetime,
     ) -> "Incident":
         """
         Factory method to create a new Incident.
@@ -104,7 +103,7 @@ class Incident:
         tipo = IncidentType.from_string(tipo_incidente)
         sev = IncidentSeverity.from_string(gravedad)
         placa = PlateNumber(placa_vehiculo)
-        fecha = fecha_hora or datetime.utcnow()  # ← default to now if not provided
+        fecha = fecha_hora  # ← default to now if not provided
         incident_id = cls._generate_id(tipo, sev, fecha)
 
         return cls(
@@ -142,6 +141,19 @@ class Incident:
             "tipo_incidente": self.tipo_incidente.value,
             "gravedad": self.gravedad.value,
             "descripcion": self.descripcion,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
+
+    def to_event(self) -> dict:
+        return {
+            "incident_id": self.id,
+            "event_date": self.fecha_hora.isoformat(),
+            "driver_id": self.id_conductor,
+            "vehicle_id": self.get_plate_str(),
+            "incident_type": self.tipo_incidente.value,
+            "severity": self.gravedad.value,
+            "description": self.descripcion,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

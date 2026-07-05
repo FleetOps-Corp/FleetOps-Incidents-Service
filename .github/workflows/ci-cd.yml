@@ -11,8 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      DJANGO_SETTINGS_MODULE: incidents.settings.test
+
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: incidents_test
+      DB_USER: test_user
+      DB_PASSWORD: test_password
+
       VEHICLES_API_URL: http://vehicles-service:8000
-    
+
+      AWS_REGION: us-east-1
+      SQS_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/000000000000/test-queue
+
     services:
       postgres:
         image: postgres:16.3-alpine3.20
@@ -30,6 +41,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -45,25 +58,19 @@ jobs:
         run: |
           ruff check incidents tests
 
-      - name: Run Mypy
+      - name: Run MyPy
         run: |
           mypy incidents
 
       - name: Run unit tests
-        env:
-          DB_HOST: localhost
-          DB_NAME: incidents_test
-          DB_USER: test_user
-          DB_PASSWORD: test_password
         run: |
-          pytest tests/unit -v --cov=incidents --cov-fail-under=80 --cov-report=xml
+          pytest tests/unit \
+            -v \
+            --cov=incidents \
+            --cov-fail-under=80 \
+            --cov-report=xml
 
       - name: Run integration tests
-        env:
-          DB_HOST: localhost
-          DB_NAME: incidents_test
-          DB_USER: test_user
-          DB_PASSWORD: test_password
         run: |
           pytest tests/integration -v
 
@@ -77,10 +84,11 @@ jobs:
         with:
           files: ./coverage.xml
 
-      #ruff sustituye a flake8, por lo que no es necesario ejecutar ambos. Se puede descomentar si se desea usar flake8 en lugar de ruff.
-      #- name: Run linting
-      #  run: |
-      #    flake8 incidents tests --max-line-length=100 --exclude=migrations
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Check code formatting
         run: |
@@ -98,16 +106,23 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --file Dockerfile --tag incidents-service:latest .
+          docker build \
+            --file Dockerfile \
+            --tag incidents-service:latest .
 
       - name: Run Docker image
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/app" \
             -w /app \
-            -e VEHICLES_API_URL=http://vehicles-service:8000 \
+            -e DJANGO_SETTINGS_MODULE=incidents.settings.test \
             -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
             -e DB_NAME=incidents_test \
             -e DB_USER=test_user \
             -e DB_PASSWORD=test_password \
-            incidents-service:latest python -m pytest tests/unit -q
+            -e VEHICLES_API_URL=http://vehicles-service:8000 \
+            -e AWS_REGION=us-east-1 \
+            -e SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/000000000000/test-queue \
+            incidents-service:latest \
+            python -m pytest tests/unit -q

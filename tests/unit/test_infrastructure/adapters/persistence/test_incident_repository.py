@@ -85,7 +85,7 @@ class TestDjangoIncidentRepository:
         return Incident(
             id="INC-20260601-abcd",
             id_conductor="driver-1",
-            placa_vehiculo=PlateNumber("ABC-1234"),
+            placa_vehiculo=PlateNumber("ABC-123"),
             fecha_hora=datetime(2026, 6, 1, 10, 30, 0),
             tipo_incidente=IncidentType.HUMANO,
             gravedad=IncidentSeverity.GRAVE,
@@ -97,7 +97,7 @@ class TestDjangoIncidentRepository:
     def _orm_item(
         self,
         incident_id="INC-20260601-abcd",
-        plate="ABC-1234",
+        plate="ABC-123",
         driver="driver-1",
         tipo="HUMANO",
         gravedad="GRAVE",
@@ -128,7 +128,7 @@ class TestDjangoIncidentRepository:
 
         assert result is not None
         assert result.id == "INC-20260601-abcd"
-        assert result.get_plate_str() == "ABC-1234"
+        assert result.get_plate_str() == "ABC-123"
 
     def test_find_by_id_returns_none_when_missing(self):
         FakeIncidentORM.objects = FakeManager([])
@@ -152,14 +152,14 @@ class TestDjangoIncidentRepository:
         FakeIncidentORM.objects = FakeManager(
             [
                 self._orm_item(),
-                self._orm_item(incident_id="INC-20260601-efgh", plate="XYZ-9999"),
+                self._orm_item(incident_id="INC-20260601-efgh", plate="XYZ-999"),
             ]
         )
 
-        result = self.repository.find_by_placa("ABC-1234")
+        result = self.repository.find_by_placa("ABC-123")
 
         assert len(result) == 1
-        assert result[0].get_plate_str() == "ABC-1234"
+        assert result[0].get_plate_str() == "ABC-123"
 
     def test_find_by_conductor_filters_records(self):
         FakeIncidentORM.objects = FakeManager(
@@ -205,7 +205,7 @@ class TestDjangoIncidentRepository:
         result = self.repository.find_by_filters(
             tipo_incidente="HUMANO",
             gravedad="GRAVE",
-            placa="ABC-1234",
+            placa="ABC-123",
             id_conductor="driver-1",
             fecha_desde=datetime(2026, 6, 1, 0, 0, 0),
             fecha_hasta=datetime(2026, 6, 2, 0, 0, 0),
@@ -220,6 +220,6 @@ class TestDjangoIncidentRepository:
         result = self.repository._orm_to_domain(orm_item)
 
         assert result.id == orm_item.id
-        assert result.placa_vehiculo == PlateNumber("ABC-1234")
+        assert result.placa_vehiculo == PlateNumber("ABC-123")
         assert result.tipo_incidente == IncidentType.HUMANO
         assert result.gravedad == IncidentSeverity.GRAVE

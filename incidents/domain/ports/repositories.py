@@ -1,8 +1,8 @@
 """Repository Port - Hexagonal interface for incident persistence."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from incidents.domain.models import Incident
 
@@ -118,17 +118,3 @@ class IncidentRepository(ABC):
             List of incidents matching all specified filters
         """
         pass
-
-    # @abstractmethod
-    # def update_estado(self, incident_id: UUID, nuevo_estado: str) -> Incident:
-    #     """
-    #     Update the state of an incident (for audit trail).
-
-    #     Args:
-    #         incident_id: The incident UUID
-    #         nuevo_estado: New state value (e.g., "EN_GESTION")
-
-    #     Returns:
-    #         Incident: The updated incident
-    #     """
-    #     pass
