@@ -57,7 +57,7 @@ class TestIncidentServiceRegister:
         # mock_message_broker.publish_incident_registered.assert_called_once()
         mock_message_publisher.publish.assert_called_once_with(
             event_type="incident_registered",
-            payload=saved_incident.to_dict(),
+            payload=saved_incident.to_event(),
         )
 
     def test_register_incident_invalid_type(self, incident_service):
