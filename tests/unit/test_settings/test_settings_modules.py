@@ -1,9 +1,14 @@
 """Unit tests for Django settings and app configuration modules."""
 
 import importlib
+import json
+import sys
 from unittest.mock import Mock
 
+from django.test import RequestFactory
+
 import incidents
+from incidents.urls import health_check
 
 
 class TestSettingsModules:
@@ -75,3 +80,35 @@ class TestSettingsModules:
         config.ready()
 
         configure_mock.assert_called_once()
+
+    def test_health_check_returns_ok_payload(self):
+        request = RequestFactory().get("/health")
+
+        response = health_check(request)
+
+        assert response.status_code == 200
+        assert json.loads(response.content) == {
+            "status": "ok",
+            "service": "incidents",
+        }
+
+    def test_wsgi_module_sets_default_settings_and_exposes_application(
+        self, monkeypatch
+    ):
+        monkeypatch.delenv("DJANGO_SETTINGS_MODULE", raising=False)
+
+        stub_application = object()
+
+        monkeypatch.setattr(
+            "django.core.wsgi.get_wsgi_application",
+            lambda: stub_application,
+        )
+
+        sys.modules.pop("incidents.wsgi", None)
+        wsgi_module = importlib.import_module("incidents.wsgi")
+
+        assert wsgi_module.application is stub_application
+        assert (
+            importlib.import_module("os").environ["DJANGO_SETTINGS_MODULE"]
+            == "incidents.settings.base"
+        )
