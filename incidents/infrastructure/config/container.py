@@ -14,7 +14,7 @@ from incidents.domain.services import IncidentService, VehicleValidatorService
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
-from incidents.infrastructure.adapters.messaging.sqs_publisher import (
+from incidents.infrastructure.adapters.messaging.sns_publisher import (
     SQSMessagePublisher,
 )
 from incidents.infrastructure.adapters.persistence.incident_repository import (
