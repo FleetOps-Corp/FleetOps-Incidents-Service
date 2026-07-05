@@ -84,4 +84,3 @@ class PlateNumber:
         if not isinstance(other, PlateNumber):
             return False
         return self.value.upper() == other.value.upper()
-    
