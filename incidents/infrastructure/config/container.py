@@ -15,7 +15,7 @@ from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
 from incidents.infrastructure.adapters.messaging.sns_publisher import (
-    SQSMessagePublisher,
+    SNSMessagePublisher,
 )
 from incidents.infrastructure.adapters.persistence.incident_repository import (
     DjangoIncidentRepository,
@@ -47,8 +47,8 @@ def configure_application():
             vehicles_api_url=os.getenv("VEHICLES_API_URL"),
         )
 
-        message_publisher = SQSMessagePublisher(
-            queue_url=os.getenv("SQS_QUEUE_URL"),
+        message_publisher = SNSMessagePublisher(
+            topic_arn=os.getenv("SNS_TOPIC_ARN"),
             region_name=os.getenv("AWS_REGION"),
         )
 

@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 from incidents.infrastructure.config import container
 
+
 class TestConfigureApp:
 
     def test_configure_application_testing(self, monkeypatch):
@@ -68,7 +69,7 @@ class TestConfigureApp:
             register_uc=register_uc,
             query_uc=query_uc,
         )
-        
+
     def test_configure_application_production(self, monkeypatch):
         """Should wire real adapters when TESTING=False."""
 
@@ -76,7 +77,7 @@ class TestConfigureApp:
 
         monkeypatch.setenv("VEHICLES_API_URL", "http://vehicles")
         monkeypatch.setenv("AWS_REGION", "us-east-1")
-        monkeypatch.setenv("SQS_QUEUE_URL", "https://queue")
+        monkeypatch.setenv("SNS_TOPIC_ARN", "https://queue")
 
         repo = Mock()
         vehicle_client = Mock()
@@ -101,7 +102,7 @@ class TestConfigureApp:
 
         monkeypatch.setattr(
             container,
-            "SQSMessagePublisher",
+            "SNSMessagePublisher",
             Mock(return_value=publisher),
         )
 
@@ -141,8 +142,8 @@ class TestConfigureApp:
             vehicles_api_url="http://vehicles",
         )
 
-        container.SQSMessagePublisher.assert_called_once_with(
-            queue_url="https://queue",
+        container.SNSMessagePublisher.assert_called_once_with(
+            topic_arn="https://queue",
             region_name="us-east-1",
         )
 

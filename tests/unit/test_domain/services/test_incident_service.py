@@ -112,7 +112,7 @@ class TestIncidentServiceRegister:
         # Assert
         mock_message_publisher.publish.assert_called_once_with(
             event_type="incident_registered",
-            payload=saved_incident.to_dict(),
+            payload=saved_incident.to_event(),
         )
 
     def test_register_incident_returns_success_even_if_publish_fails(

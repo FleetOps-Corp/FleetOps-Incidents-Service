@@ -36,9 +36,15 @@ class TestSNSMessagePublisher:
 
         mock_sns.publish.assert_called_once()
         call_kwargs = mock_sns.publish.call_args.kwargs
-        assert call_kwargs["TopicArn"] == "arn:aws:sns:us-east-1:255615880629:incidents_topic"
+        assert (
+            call_kwargs["TopicArn"]
+            == "arn:aws:sns:us-east-1:255615880629:incidents_topic"
+        )
         assert "INC-123" in call_kwargs["Message"]
-        assert call_kwargs["MessageAttributes"]["event_type"]["StringValue"] == "incident_registered"
+        assert (
+            call_kwargs["MessageAttributes"]["event_type"]["StringValue"]
+            == "incident_registered"
+        )
 
     @patch("incidents.infrastructure.adapters.messaging.sns_publisher.boto3.client")
     def test_publish_failure_raises(self, mock_boto_client):
@@ -53,4 +59,6 @@ class TestSNSMessagePublisher:
         )
 
         with pytest.raises(Exception, match="NoCredentialsError"):
-            publisher.publish(event_type="incident_registered", payload={"id": "INC-123"})
+            publisher.publish(
+                event_type="incident_registered", payload={"id": "INC-123"}
+            )
