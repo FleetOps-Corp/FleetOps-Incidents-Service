@@ -24,7 +24,7 @@ def mock_incident_repository():
 
 @pytest.fixture
 def mock_message_publisher():
-    """Fixture: Mock message publisher."""
+    """Fixture: Mock message publisher (agnostic of SNS/SQS - mocks the port)."""
     return Mock(spec=MessagePublisherPort)
 
 
