@@ -109,3 +109,6 @@ USE_TZ = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Environment flag used by infrastructure bootstrap code.
+TESTING = False
