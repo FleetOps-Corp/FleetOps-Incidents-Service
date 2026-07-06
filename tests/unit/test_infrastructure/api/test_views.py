@@ -24,7 +24,6 @@ class TestCreateIncidentView:
         """Create request factory."""
         return APIRequestFactory()
 
-
     @pytest.fixture
     def user(self):
         """Authenticated mock user."""
