@@ -72,3 +72,9 @@ build/
 db.sqlite3
 media/
 staticfiles/
+
+# JWT keys — never commit real secrets
+secrets/*.pem
+!secrets/.gitkeep
+
+.github/act-event.json

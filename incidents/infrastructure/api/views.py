@@ -4,7 +4,7 @@ import logging
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -40,7 +40,7 @@ def set_use_cases(register_uc, query_uc):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def create_incident(request: Request) -> Response:
     """
     POST /api/incidents/
@@ -123,7 +123,7 @@ def create_incident(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def query_incidents(request: Request) -> Response:
     """
     GET /api/incidents/
@@ -190,7 +190,7 @@ def query_incidents(request: Request) -> Response:
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_incident(request: Request, incident_id: str) -> Response:
     """
     GET /api/incidents/{incident_id}/

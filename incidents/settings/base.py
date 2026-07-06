@@ -68,6 +68,21 @@ DATABASES = {
     }
 }
 
+# JWT ConfigurationF
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "RS256")
+JWT_PUBLIC_KEY_PATH = os.getenv("JWT_PUBLIC_KEY_PATH")
+
+JWT_PUBLIC_KEY = ""
+
+if JWT_PUBLIC_KEY_PATH and Path(JWT_PUBLIC_KEY_PATH).exists():
+    with open(JWT_PUBLIC_KEY_PATH, "r", encoding="utf-8") as key_file:
+        JWT_PUBLIC_KEY = key_file.read()
+
+SIMPLE_JWT = {
+    "ALGORITHM": JWT_ALGORITHM,
+    "VERIFYING_KEY": JWT_PUBLIC_KEY,
+}
+
 # REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
