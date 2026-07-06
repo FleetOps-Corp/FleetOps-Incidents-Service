@@ -41,9 +41,10 @@ def configure_application():
 
     if settings.TESTING:
         vehicle_client = DummyVehicleClient()
-        incident_service = IncidentService(repo, message_publisher)
-        vehicle_validator = VehicleValidatorService(vehicle_client)
-        
+        message_publisher = SNSMessagePublisher(
+            topic_arn=os.getenv("SNS_TOPIC_ARN"),
+            region_name=os.getenv("AWS_REGION"),
+        )
     else:
         vehicle_client = VehicleClientWithCircuitBreaker(
             vehicles_api_url=os.getenv("VEHICLES_API_URL"),
@@ -53,6 +54,9 @@ def configure_application():
             topic_arn=os.getenv("SNS_TOPIC_ARN"),
             region_name=os.getenv("AWS_REGION"),
         )
+
+    incident_service = IncidentService(repo, message_publisher)
+    vehicle_validator = VehicleValidatorService(vehicle_client)
 
     set_use_cases(
         register_uc=RegisterIncidentUseCase(
