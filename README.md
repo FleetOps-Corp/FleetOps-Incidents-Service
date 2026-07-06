@@ -335,9 +335,9 @@ This project uses **GitHub Actions** to automate code quality verification, test
 The CI workflow performs the following tasks:
 
 1. Checks out the project source code.
-2. Sets up a Python 3.11 environment.
-3. Installs all project dependencies.
-4. Starts a temporary PostgreSQL service for testing.
+2. Sets up a **Python 3.11** environment.
+3. Installs all project dependencies defined in `requirements.txt`.
+4. Starts a temporary **PostgreSQL** service for integration testing.
 5. Performs static code analysis using:
    - Ruff
    - MyPy
@@ -345,8 +345,9 @@ The CI workflow performs the following tasks:
 6. Executes:
    - Unit tests
    - Integration tests
-7. Generates a code coverage report.
-8. Uploads coverage results to Codecov.
+7. Generates code coverage reports in XML and HTML formats.
+8. Uploads the coverage report to **Codecov**.
+9. Runs a **SonarCloud** scan to analyze code quality, maintainability, and potential security issues.
 
 ### Docker Validation
 

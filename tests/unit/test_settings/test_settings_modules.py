@@ -55,52 +55,23 @@ class TestSettingsModules:
         ]
 
     def test_app_config_ready_wires_use_cases(self, monkeypatch):
-        views_module = importlib.import_module("incidents.infrastructure.api.views")
-        repo_module = importlib.import_module(
-            "incidents.infrastructure.adapters.persistence.incident_repository"
-        )
-        use_cases_module = importlib.import_module("incidents.application.use_cases")
-        services_module = importlib.import_module("incidents.domain.services")
-
-        set_use_cases = Mock()
-        repo = Mock(name="repo")
-        incident_service = Mock(name="incident_service")
-        vehicle_validator = Mock(name="vehicle_validator")
-        register_uc = Mock(name="register_uc")
-        query_uc = Mock(name="query_uc")
-
-        monkeypatch.setattr(views_module, "set_use_cases", set_use_cases)
-        monkeypatch.setattr(
-            repo_module, "DjangoIncidentRepository", Mock(return_value=repo)
-        )
-        monkeypatch.setattr(
-            services_module, "IncidentService", Mock(return_value=incident_service)
-        )
-        monkeypatch.setattr(
-            services_module,
-            "VehicleValidatorService",
-            Mock(return_value=vehicle_validator),
-        )
-        monkeypatch.setattr(
-            use_cases_module,
-            "RegisterIncidentUseCase",
-            Mock(return_value=register_uc),
-        )
-        monkeypatch.setattr(
-            use_cases_module,
-            "QueryIncidentsUseCase",
-            Mock(return_value=query_uc),
-        )
-
         config_module = importlib.import_module(
             "incidents.infrastructure.config.django_setup"
         )
-        importlib.reload(config_module)
-        config = config_module.IncidentsConfig("incidents", incidents)
 
+        container_module = importlib.import_module(
+            "incidents.infrastructure.config.container"
+        )
+
+        configure_mock = Mock()
+
+        monkeypatch.setattr(
+            container_module,
+            "configure_application",
+            configure_mock,
+        )
+
+        config = config_module.IncidentsConfig("incidents", incidents)
         config.ready()
 
-        set_use_cases.assert_called_once_with(
-            register_uc=register_uc,
-            query_uc=query_uc,
-        )
+        configure_mock.assert_called_once()

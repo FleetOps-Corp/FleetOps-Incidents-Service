@@ -57,7 +57,7 @@ class TestIncidentServiceRegister:
         # mock_message_broker.publish_incident_registered.assert_called_once()
         mock_message_publisher.publish.assert_called_once_with(
             event_type="incident_registered",
-            payload=saved_incident.to_dict(),
+            payload=saved_incident.to_event(),
         )
 
     def test_register_incident_invalid_type(self, incident_service):
@@ -85,7 +85,7 @@ class TestIncidentServiceRegister:
             )
 
     def test_register_incident_publishes_correct_event(
-        self, incident_service, mock_incident_repository
+        self, incident_service, mock_incident_repository, mock_message_publisher
     ):
         """Given: Mechanical grave incident, When: Register, Then: Publish with correct data."""
         # Arrange
@@ -109,11 +109,17 @@ class TestIncidentServiceRegister:
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
 
+        # Assert
+        mock_message_publisher.publish.assert_called_once_with(
+            event_type="incident_registered",
+            payload=saved_incident.to_event(),
+        )
+
     def test_register_incident_returns_success_even_if_publish_fails(
         self, incident_service, mock_incident_repository, mock_message_publisher
     ):
         """
-        Given: SQS publish raises an exception
+        Given: SNS publish raises an exception
         When: Register incident
         Then: Incident is still returned (publish failure does not propagate)
         """
@@ -126,7 +132,7 @@ class TestIncidentServiceRegister:
             fecha_hora=datetime(2026, 6, 17, 15, 58, 0),
         )
         mock_incident_repository.save.return_value = saved_incident
-        mock_message_publisher.publish.side_effect = Exception("SQS unavailable")
+        mock_message_publisher.publish.side_effect = Exception("SNS unavailable")
 
         result = incident_service.register_incident(
             id_conductor="c1",

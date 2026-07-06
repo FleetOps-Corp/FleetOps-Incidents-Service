@@ -144,3 +144,16 @@ class Incident:
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+
+    def to_event(self) -> dict:
+        return {
+            "incident_id": self.id,
+            "event_date": self.fecha_hora.isoformat(),
+            "driver_id": self.id_conductor,
+            "vehicle_id": self.get_plate_str(),
+            "incident_type": self.tipo_incidente.value,
+            "severity": self.gravedad.value,
+            "description": self.descripcion,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }

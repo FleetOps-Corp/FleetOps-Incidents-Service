@@ -135,7 +135,7 @@ class IncidentService:
         try:
             self.message_publisher.publish(
                 event_type="incident_registered",
-                payload=incident.to_dict(),
+                payload=incident.to_event(),
             )
         except Exception as e:
             logging.exception(
