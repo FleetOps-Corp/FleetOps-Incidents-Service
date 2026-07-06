@@ -58,12 +58,12 @@ class TestConfigureApp:
         container.IncidentService.assert_called_once()
         container.VehicleValidatorService.assert_called_once()
 
-        # Dummy implementations should have been used
+        # Dummy vehicle client and SNS publisher should have been used
         vehicle_client = container.VehicleValidatorService.call_args[0][0]
         message_publisher = container.IncidentService.call_args[0][1]
 
         assert isinstance(vehicle_client, container.DummyVehicleClient)
-        assert isinstance(message_publisher, container.DummyMessagePublisher)
+        assert isinstance(message_publisher, container.SNSMessagePublisher)
 
         set_use_cases.assert_called_once_with(
             register_uc=register_uc,
