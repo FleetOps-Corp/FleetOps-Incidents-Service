@@ -41,7 +41,10 @@ def configure_application():
 
     if settings.TESTING:
         vehicle_client = DummyVehicleClient()
-        message_publisher = DummyMessagePublisher()
+        message_publisher = SNSMessagePublisher(
+            topic_arn=os.getenv("SNS_TOPIC_ARN"),
+            region_name=os.getenv("AWS_REGION"),
+        )
     else:
         vehicle_client = VehicleClientWithCircuitBreaker(
             vehicles_api_url=os.getenv("VEHICLES_API_URL"),

@@ -40,6 +40,8 @@ services:
       DB_PORT: ${DB_PORT}
       VEHICLES_API_URL: ${VEHICLES_API_URL}
       LOG_LEVEL: INFO
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public.pem
     ports:
       - "8000:8000"
     depends_on:
@@ -47,6 +49,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
+      - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s

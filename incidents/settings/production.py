@@ -5,6 +5,8 @@ import os
 from .base import *
 
 DEBUG = False
+DEBUG = False
+
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")  # noqa: F405
 
 # Security
