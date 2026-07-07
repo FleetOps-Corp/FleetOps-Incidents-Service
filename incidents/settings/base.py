@@ -25,14 +25,21 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "rest_framework",
+    "drf_spectacular",
     "corsheaders",
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "incidents.infrastructure.api.middleware.error_handler.ErrorHandlerMiddleware",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 ROOT_URLCONF = "incidents.urls"
@@ -89,8 +96,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FleetOps Incidents Service API",
+    "DESCRIPTION": "Documentación OpenAPI del servicio de incidentes de FleetOps.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SERVERS": [
+        {
+            "url": os.getenv("SWAGGER_SERVER_URL", "http://100.31.63.184:8080"),
+            "description": "FleetOps Incidents API",
+        }
+    ],
 }
 
 # Logging

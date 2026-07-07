@@ -2,6 +2,7 @@
 
 import logging
 
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -39,6 +40,17 @@ def set_use_cases(register_uc, query_uc):
 # Permission classes need to be changed
 
 
+@extend_schema(
+    tags=["Incidents"],
+    summary="Crear un incidente",
+    request=IncidentRequestSerializer,
+    responses={
+        201: IncidentResponseSerializer,
+        400: OpenApiResponse(description="Datos inválidos"),
+        422: OpenApiResponse(description="El vehículo no está registrado"),
+        500: OpenApiResponse(description="Error interno del servidor"),
+    },
+)
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def create_incident(request: Request) -> Response:
@@ -122,6 +134,16 @@ def create_incident(request: Request) -> Response:
         )
 
 
+@extend_schema(
+    tags=["Incidents"],
+    summary="Consultar incidentes",
+    request=None,
+    responses={
+        200: IncidentResponseSerializer(many=True),
+        400: OpenApiResponse(description="Filtros inválidos"),
+        500: OpenApiResponse(description="Error interno del servidor"),
+    },
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def query_incidents(request: Request) -> Response:
@@ -189,6 +211,16 @@ def query_incidents(request: Request) -> Response:
         )
 
 
+@extend_schema(
+    tags=["Incidents"],
+    summary="Obtener un incidente por ID",
+    request=None,
+    responses={
+        200: IncidentResponseSerializer,
+        400: OpenApiResponse(description="Formato de ID inválido"),
+        404: OpenApiResponse(description="Incidente no encontrado"),
+    },
+)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_incident(request: Request, incident_id: str) -> Response:
