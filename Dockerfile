@@ -3,7 +3,6 @@
 # Builder stage: Compiles dependencies
 # Runtime stage: Minimal production image with non-root user
 
-
 # Stage 1: Builder
 FROM python:3.11-alpine AS builder
 

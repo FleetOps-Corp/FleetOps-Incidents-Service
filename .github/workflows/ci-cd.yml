@@ -97,6 +97,7 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # solo en main
 
     steps:
       - uses: actions/checkout@v4
@@ -104,25 +105,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build Docker image
-        run: |
-          docker build \
-            --file Dockerfile \
-            --tag incidents-service:latest .
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Run Docker image
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/app" \
-            -w /app \
-            -e DJANGO_SETTINGS_MODULE=incidents.settings.test \
-            -e DB_HOST=localhost \
-            -e DB_PORT=5432 \
-            -e DB_NAME=incidents_test \
-            -e DB_USER=test_user \
-            -e DB_PASSWORD=test_password \
-            -e VEHICLES_API_URL=http://vehicles-service:8000 \
-            -e AWS_REGION=us-east-1 \
-            -e SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/000000000000/test-queue \
-            incidents-service:latest \
-            python -m pytest tests/unit -q
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: julianamlb/incidentes:latest

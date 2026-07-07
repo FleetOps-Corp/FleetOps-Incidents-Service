@@ -115,6 +115,7 @@ pip install -r requirements.txt
 ### Run Database Migrations
 
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -156,7 +157,7 @@ if errors occur, use ```black .``` in the root terminal
 pytest
 
 # Run with coverage report
-pytest --cov=incidents --cov-report=html
+pytest --cov=incidents --cov-report=xml --cov-report=html
 
 # View HTML coverage report
 open htmlcov/index.html
