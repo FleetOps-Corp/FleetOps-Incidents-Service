@@ -58,6 +58,9 @@ def create_incident(request: Request) -> Response:
     POST /api/incidents/
 
     Register a new incident.
+    
+    The request payload is validated and converted into an IncidentDTO.
+    The corresponding application use case is executed to register the incident.
 
     Primary transactional flow exercising all architectural layers:
     1. API Gateway validates JWT token
@@ -73,6 +76,7 @@ def create_incident(request: Request) -> Response:
 
     Returns:
         Response: HTTP 201 with incident data or error
+    
     """
     try:
         # Deserialize request
@@ -150,21 +154,21 @@ def query_incidents(request: Request) -> Response:
     """
     GET /api/incidents/
 
-    Query incidents with optional filters.
+    Retrieve incidents using optional query filters.
 
     Query parameters:
-    - tipo_incidente: HUMANO or MECANICO
-    - gravedad: LEVE or GRAVE
-    - placa: Vehicle plate
-    - id_conductor: Conductor ID
-    - fecha_desde: Start date (ISO format)
-    - fecha_hasta: End date (ISO format)
+    - incident_type: Type of incident.
+    - severity: Incident severity.
+    - vehicle_id: Vehicle identifier.
+    - driver_id: Driver identifier.
+    - start_date: Start date (ISO 8601 format).
+    - end_date: End date (ISO 8601 format).
 
     Args:
-        request: HTTP request with query parameters
+        request: HTTP request containing optional query parameters.
 
     Returns:
-        Response: HTTP 200 with incident list or error
+        Response: HTTP 200 with a list of incidents or an error response.
     """
     try:
         # Deserialize query parameters
