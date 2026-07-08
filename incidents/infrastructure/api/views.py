@@ -58,7 +58,7 @@ def create_incident(request: Request) -> Response:
     POST /api/incidents/
 
     Register a new incident.
-    
+
     The request payload is validated and converted into an IncidentDTO.
     The corresponding application use case is executed to register the incident.
 
@@ -76,7 +76,7 @@ def create_incident(request: Request) -> Response:
 
     Returns:
         Response: HTTP 201 with incident data or error
-    
+
     """
     try:
         # Deserialize request
