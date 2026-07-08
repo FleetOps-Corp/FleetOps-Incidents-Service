@@ -1,6 +1,3 @@
-# Docker Compose configuration for local development and testing
-version: "3.9"
-
 services:
   # PostgreSQL Database
   postgres:
@@ -13,7 +10,7 @@ services:
     ports:
       - "5050:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     command: ["-c", "listen_addresses=*"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
@@ -43,7 +40,7 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public.pem
     ports:
-      - "8000:8080"
+      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -60,7 +57,7 @@ services:
       - incidents-network
     command: >
       sh -c "python manage.py migrate &&
-             python manage.py runserver"
+             python manage.py runserver 0.0.0.0:8000"
 
 volumes:
   postgres_data:
