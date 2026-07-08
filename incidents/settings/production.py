@@ -1,7 +1,5 @@
 """Django production settings."""
 
-import os
-
 from .base import *
 
 DEBUG = False
