@@ -97,7 +97,7 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/jmb'
 
     steps:
       - uses: actions/checkout@v4
@@ -126,5 +126,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/incidentes-servicio
-            docker compose pull incidentes
-            docker compose up -d incidentes
+            docker compose pull incidentes-servicio
+            docker compose up -d incidentes-servicio
