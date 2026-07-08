@@ -29,7 +29,7 @@ class TestCreateIncidentView:
         """Authenticated mock user."""
         return SimpleNamespace(
             is_authenticated=True,
-            role="ADMINISTRADOR",  
+            role="ADMINISTRADOR",
             id="user-1",
             email="test@test.com",
         )
