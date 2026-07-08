@@ -85,15 +85,10 @@ if JWT_PUBLIC_KEY_PATH and Path(JWT_PUBLIC_KEY_PATH).exists():
     with open(JWT_PUBLIC_KEY_PATH, "r", encoding="utf-8") as key_file:
         JWT_PUBLIC_KEY = key_file.read()
 
-SIMPLE_JWT = {
-    "ALGORITHM": JWT_ALGORITHM,
-    "VERIFYING_KEY": JWT_PUBLIC_KEY,
-}
-
 # REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "incidents.infrastructure.api.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
