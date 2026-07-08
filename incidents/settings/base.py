@@ -28,13 +28,16 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
+    "django_prometheus",
 ]
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "incidents.infrastructure.api.middleware.error_handler.ErrorHandlerMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")

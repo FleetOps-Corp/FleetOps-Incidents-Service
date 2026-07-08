@@ -1,215 +1,158 @@
 # Incidents Microservice - FleetOps Platform
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FleetOps-Corp_FleetOps-Incidents-Service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=FleetOps-Corp_FleetOps-Incidents-Service)
+
+
+Backend service for managing vehicle and driver incidents within the FleetOps platform. The service uses a hexagonal architecture with Django REST Framework, PostgreSQL, a synchronous vehicle validation call protected by Circuit Breaker, and asynchronous event publication through AWS SNS/SQS.
+
 ## Overview
 
-**Incidents Microservice** is a production-grade backend service for managing vehicle and driver incidents within the FleetOps platform. It implements a **Hexagonal (Ports & Adapters) architecture** with unit test coverage, asynchronous event-driven coordination, and resilience patterns.
+The microservice handles three core actions:
 
-The service centralizes incident registration, validation, querying
+- Register incidents after validating that the vehicle exists in the Vehicles service.
+- Query incidents by type, severity, driver, vehicle, or date range.
+- Retrieve a single incident by its identifier.
 
-**Built With:** Python 3.11, Django 4.2 LTS, PostgreSQL 16, Docker
-
----
+Incident records are immutable once created. The service persists audit timestamps (`created_at`, `updated_at`) and exposes REST endpoints only through the API layer.
 
 ## Architecture
 
-Revisar
+### Hexagonal Structure
 
-### Architectural Style: Hexagonal (Ports & Adapters)
+The project is organized into three main layers:
 
-The microservice isolates **pure domain logic** from external technologies:
-
-- **Domain Core** (`incidents/domain/`): Business logic, aggregates, value objects, domain services
-- **Application Layer** (`incidents/application/`): Use cases, orchestration, DTOs
-- **Infrastructure Adapters** (`incidents/infrastructure/`): REST API, databases, message brokers, HTTP clients
+- `incidents/domain/`: core entities, value objects, ports, and business services.
+- `incidents/application/`: use cases and DTOs that coordinate the domain.
+- `incidents/infrastructure/`: REST API, persistence, HTTP client, messaging, and configuration.
 
 ### Design Patterns
 
-**Circuit Breaker** - Resilience for Vehicle microservice calls  
-**Repository Pattern** - Abstracted persistence via Hexagonal ports  
-**DDD (Domain-Driven Design)** - Aggregate roots, value objects, domain events
+- Hexagonal Architecture (Ports and Adapters)
+- Circuit Breaker for the synchronous Vehicles validation call
+- Repository Pattern for persistence
+- Event publication through AWS SNS with SQS fan-out
 
-### Quality Attributes (ISO/IEC 25010)
+### Quality Attributes
 
-Revisar 
+- Availability: fail-fast vehicle validation with Circuit Breaker.
+- Traceability: immutable incident records with audit timestamps.
+- Resilience: event publication failures are logged and do not block incident creation.
+- Modifiability: adapters can be replaced without changing domain logic.
+- Scalability: stateless REST API and containerized deployment.
 
-| Attribute | Priority | Implementation |
-| :--- | :--- | :--- |
-| **Availability** | CRITICAL | Circuit Breaker, health checks |
-| **Trazability** | CRITICAL | Immutable incident records |
-| **Resilience** | CRITICAL | message retry policies |
-| **Modifiability** | HIGH | Hexagonal isolation; adapters swappable |
-| **Scalability** | HIGH | Stateless REST, containerized, horizontal replication |
+## Tech Stack
 
----
+- Python 3.11
+- Django 4.2 LTS
+- Django REST Framework
+- PostgreSQL 16
+- Docker
+- AWS SNS / SQS
+- pybreaker
+- requests
+- boto3
 
-## Prerequisites
+## Project Structure
 
-### System Requirements
-- **Docker** 24.0+
-- **Docker Compose** 2.20+
-- **Python** 3.11+ (for local development)
-- **Git** 2.40+
+- `manage.py`: Django management entry point.
+- `incidents/urls.py`: root URL configuration and health check.
+- `incidents/settings/`: environment-specific Django settings.
+- `incidents/application/use_cases/`: application workflows.
+- `incidents/domain/models/`: domain entities and value objects.
+- `incidents/domain/services/`: business services.
+- `incidents/domain/ports/`: repository, message publisher, and vehicle client ports.
+- `incidents/infrastructure/api/`: serializers, views, and API routing.
+- `incidents/infrastructure/adapters/`: persistence, messaging, HTTP client, and logging adapters.
+- `tests/`: unit and integration tests.
 
-### Optional Local Development
-- **PostgreSQL** 16+ (if running without Docker)
----
+## Requirements
 
-## Quick Start
+- Docker 24+
+- Docker Compose 2.20+
+- Python 3.11+
+- Git 2.40+
 
-### 1. Clone and Setup
+## Local Setup
 
-```bash
-git clone https://github.com/FleetOps-Corp/FleetOps-Incidents-Service
-```
-
-### 2. Run with Docker Compose
-
-```bash
-# Start all services (PostgreSQL, Incidents API)
-docker compose up --build
-docker-compose up --build
-```
-
-### 3. Verify Deployment
-
-```bash
-# Check services are running
-docker-compose ps
-
-# Verify API is responding
-curl -X GET http://localhost:8000/api/incidents/
-
-```
-
-### 4. Stop Services
-
-```bash
-docker-compose down
-
-# Remove volumes (clean slate)
-docker-compose down -v
-```
-
----
-
-## Local Development (Without Docker)
-
-### Setup Virtual Environment
+### 1. Create and activate a virtual environment
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-
-pip install -r requirements.txt
 ```
 
-o en Windows
+On Windows:
 
 ```bash
 python -m venv venv
-env\Scripts\activate
+venv\Scripts\activate
+```
 
+### 2. Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Run Database Migrations
+### 3. Configure environment variables
+
+Create a local `.env` file or export the required variables used by the project:
+
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_HOST`
+- `DB_PORT`
+- `VEHICLES_API_URL`
+- `SNS_TOPIC_ARN`
+- `AWS_REGION`
+- `DJANGO_SECRET_KEY`
+- `JWT_ALGORITHM`
+- `JWT_PUBLIC_KEY_PATH`
+
+### 4. Run migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
----
-
-## Running Tests
-
-Before commiting or open pr to develop and main branches, run the following commands to check the quality of it
-
-### Mypy check
+## Run with Docker
 
 ```bash
-mypy .
+docker compose up --build
 ```
 
-### Ruff check
+Or use
 
 ```bash
-ruff check .
+docker-compose up --build
 ```
 
-if theres fixable errors with ruff run the following command
+To stop the stack:
 
 ```bash
-ruff check --fix
+docker compose down
+
+# Remove volumes (clean slate)
+docker-compose down -v
 ```
-
-### Black check
-
-```bash
-black --check .
-```
-if errors occur, use ```black .``` in the root terminal
-
-### Unit Tests (100% Coverage Target)
-
-```bash
-# Run all unit tests
-pytest
-
-# Run with coverage report
-pytest --cov=incidents --cov-report=xml --cov-report=html
-
-# View HTML coverage report
-open htmlcov/index.html
-
-# Run specific test class
-pytest tests/unit/test_domain/models/test_incident.py::TestIncidentAggregateRoot -v
-```
-
-### Integration Tests
-
-```bash
-# Run E2E workflow test
-pytest tests/integration/test_register_incident_e2e.py -v
-```
-
-### Generate Coverage Report
-
-```bash
-# Text report
-coverage report
-
-# HTML report (detailed)
-coverage html
-open htmlcov/index.html
-
-# Enforce minimum coverage
-coverage report --fail-under=95
-```
-
-### Sonarqube analysis
-
-the following command runs an analysis on sonarqube, when the analysis is done can be checked in the next link: https://sonarcloud.io/project/overview?id=FleetOps-Corp_FleetOps-Incidents-Service 
-
-```bash
-docker run --rm   -e SONAR_TOKEN="env.SONAR_TOKEN"   -v "$(pwd):/usr/src"   sonarsource/sonar-scanner-cli
-```
-
----
 
 ## API Endpoints
 
-### Get All Incidents
+### Health Check
 
-Retrieves all registered incidents. The endpoint also supports filtering using query parameters.
+```http
+GET /health
+```
 
-**Endpoint**
+### List and Filter Incidents
 
 ```http
 GET /api/incidents/
 ```
 
-#### Supported Query Parameters
+Supported query parameters:
 
 | Parameter | Description | Example |
 |-----------|-------------|---------|
@@ -220,11 +163,7 @@ GET /api/incidents/
 | `start_date` | Start date and time (ISO 8601) | `?start_date=2026-06-01T00:00:00` |
 | `end_date` | End date and time (ISO 8601) | `?end_date=2026-06-24T23:59:59` |
 
-#### Example Requests
-
-```http
-GET /api/incidents/
-```
+Example requests:
 
 ```http
 GET /api/incidents/?incident_type=MECANICO
@@ -235,14 +174,6 @@ GET /api/incidents/?severity=GRAVE&tipo_incidente=MECANICO
 ```
 
 ```http
-GET /api/incidents/?vehicle_id=ABC-123&gravedad=GRAVE
-```
-
-```http
-GET /api/incidents/?driver_id=CONDUCTOR-001
-```
-
-```http
 GET /api/incidents/?start_date=2026-06-01T00:00:00&end_date=2026-06-24T23:59:59
 ```
 
@@ -250,25 +181,19 @@ GET /api/incidents/?start_date=2026-06-01T00:00:00&end_date=2026-06-24T23:59:59
 GET /api/incidents/?incident_type=HUMANO&start_date=2026-06-01T00:00:00
 ```
 
----
-
 ### Get Incident by ID
 
-Retrieves a single incident using its unique identifier.
-
-**Endpoint**
-
 ```http
-GET /api/incidents/{incident_id}
+GET /api/incidents/{incident_id}/
 ```
 
-#### Example
+Example request:
 
 ```http
 GET /api/incidents/INC-20260624-a460
 ```
 
-#### Response
+Response body example:
 
 ```json
 {
@@ -284,32 +209,26 @@ GET /api/incidents/INC-20260624-a460
 }
 ```
 
----
-
 ### Create Incident
-
-Creates a new incident.
-
-**Endpoint**
 
 ```http
 POST /api/incidents/create/
 ```
 
-#### Request Body
+Request body example:
 
 ```json
 {
-    "driver_id": "CONDUCTOR-098",
-    "vehicle_id": "ABC-129",
-    "incident_type": "MECANICO",
-    "severity": "GRAVE",
-    "description": "El conductor se estrello",
-    "event_date": "2026-06-24T10:00:00"
+  "driver_id": "CONDUCTOR-098",
+  "vehicle_id": "ABC-129",
+  "incident_type": "MECANICO",
+  "severity": "GRAVE",
+  "description": "El conductor se estrello",
+  "event_date": "2026-06-24T10:00:00"
 }
 ```
 
-#### Response
+Response body example: 
 
 ```json
 {
@@ -324,8 +243,49 @@ POST /api/incidents/create/
   "updated_at": "2026-07-02T00:18:37.763934"
 }
 ```
----
 
+## Testing and Quality
+
+Run the main quality checks with:
+
+```bash
+mypy .
+ruff check .
+black --check .
+pytest
+pytest --cov=incidents --cov-report=xml --cov-report=html
+coverage report --fail-under=95
+```
+
+If there is fixable errors with **ruff** run the following command
+
+```bash
+ruff check --fix
+```
+
+And, if errors with formatting happen, use ```black .```
+
+
+For integration testing:
+
+```bash
+pytest tests/integration/test_register_incident_e2e.py -v
+```
+
+### SonarCloud
+
+Run a local Sonar scan with:
+
+```bash
+docker run --rm -e SONAR_TOKEN="env.SONAR_TOKEN" -v "$(pwd):/usr/src" sonarsource/sonar-scanner-cli
+```
+
+## Behavior Notes
+
+- Vehicle validation is the only synchronous REST call between microservices.
+- The call is protected with Circuit Breaker and fails fast on Vehicles service errors.
+- Incident publication is best-effort: if SNS publishing fails, the incident still remains saved.
+- The current implementation does not model incident status transitions.
 
 ## CI/CD Pipeline
 
@@ -333,30 +293,41 @@ This project uses **GitHub Actions** to automate code quality verification, test
 
 ### Continuous Integration (CI)
 
-The CI workflow performs the following tasks:
+The CI workflow is automatically triggered on every push and pull request targeting the **main** and **develop** branches. It performs the following tasks:
 
 1. Checks out the project source code.
 2. Sets up a **Python 3.11** environment.
 3. Installs all project dependencies defined in `requirements.txt`.
-4. Starts a temporary **PostgreSQL** service for integration testing.
+4. Starts a temporary **PostgreSQL 16** service for integration testing.
 5. Performs static code analysis using:
    - Ruff
    - MyPy
-   - Black (format verification)
 6. Executes:
-   - Unit tests
+   - Unit tests with code coverage (minimum coverage: **80%**)
    - Integration tests
 7. Generates code coverage reports in XML and HTML formats.
 8. Uploads the coverage report to **Codecov**.
 9. Runs a **SonarCloud** scan to analyze code quality, maintainability, and potential security issues.
+10. Verifies code formatting using **Black**.
 
-### Docker Validation
+### Continuous Delivery (CD)
 
-After all tests pass successfully, the pipeline:
+When all CI checks pass successfully and changes are merged into the **main** branch, the delivery pipeline:
 
-1. Builds the Docker image for the Incident Service.
-2. Starts a container from the generated image.
-3. Executes the unit test suite inside the container to verify that the application runs correctly in its deployment environment.
+1. Checks out the project source code.
+2. Sets up **Docker Buildx**.
+3. Authenticates with **Docker Hub** using repository secrets.
+4. Builds the Docker image for the Incident Service.
+5. Pushes the generated image to Docker Hub using the `latest` tag.
+
 ---
 
-**Generated:** July 1, 2026 | **Version:** 2.0
+## Related Documentation
+
+- [DAS del microservicio](docs/DAS_Microservicio_Incidentes_FleetOps.docx.md)
+- [Docker Compose](docker-compose.yml)
+- [Django settings](incidents/settings/base.py)
+
+---
+
+**Generated:** July 05, 2026 | **Version:** 2.0
