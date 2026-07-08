@@ -1,5 +1,4 @@
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: incidents-postgres
@@ -20,15 +19,13 @@ services:
     networks:
       - incidents-network
 
-  # Incidents Microservice
   incidents-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # ← CAMBIO: usar imagen de Docker Hub, no construir localmente
+    image: julianamlb/incidentes:latest
     container_name: incidentes-servicio
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -36,6 +33,8 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       VEHICLES_API_URL: ${VEHICLES_API_URL}
+      SNS_TOPIC_ARN: ${SNS_TOPIC_ARN}
+      AWS_REGION: ${AWS_REGION}
       LOG_LEVEL: INFO
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public.pem
@@ -45,7 +44,8 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - .:/app
+      # ← ELIMINAR: no montes el código en producción
+      # Solo monta el secreto JWT
       - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -55,9 +55,8 @@ services:
       start_period: 40s
     networks:
       - incidents-network
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+    # ← CAMBIO: usar Gunicorn en lugar de runserver
+    command: gunicorn --bind 0.0.0.0:8000 --workers 4 incidents.wsgi:application
 
 volumes:
   postgres_data:
