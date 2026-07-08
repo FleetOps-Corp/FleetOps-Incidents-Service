@@ -49,6 +49,9 @@ django-stubs-ext==5.2.1
 djangorestframework-stubs==3.16.1
 gunicorn>=20.0.0
 
-
-
 drf-spectacular
+
+#JWT
+cryptography
+
+django-prometheus==2.3.1
