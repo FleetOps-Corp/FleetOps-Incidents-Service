@@ -35,7 +35,6 @@ WORKDIR /app
 
 # Copy wheels from builder
 COPY --from=builder /build/wheels /wheels
-COPY --from=builder /build/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache /wheels/*
@@ -57,4 +56,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 EXPOSE 8000
 
 # Run Gunicorn with adjustable workers via environment variable
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-2} --timeout 60 incidents.wsgi:application"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-2} --timeout 60 incidents.wsgi:application"]
