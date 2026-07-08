@@ -117,3 +117,14 @@ jobs:
           context: .
           push: true
           tags: julianamlb/incidentes:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/incidentes-servicio
+            docker compose pull incidentes
+            docker compose up -d incidentes
