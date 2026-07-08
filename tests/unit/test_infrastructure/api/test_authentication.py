@@ -22,7 +22,6 @@ class TestAuthenticatedUser:
             role="ADMIN",
             email="admin@test.com",
         )
-
         assert user.is_authenticated is True
 
 
