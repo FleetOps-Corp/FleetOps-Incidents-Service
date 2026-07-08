@@ -26,7 +26,7 @@ class TestSettingsModules:
 
         assert base.SECRET_KEY == "secret-value"
         assert base.DATABASES["default"]["NAME"] == "fleetops"
-        assert base.INSTALLED_APPS[-1].endswith("IncidentsConfig")
+        assert base.INSTALLED_APPS[-1].endswith("django_prometheus")
 
     def test_development_settings_override_database_host_and_port(self, monkeypatch):
         monkeypatch.setenv("DB_HOST", "dev-db.local")

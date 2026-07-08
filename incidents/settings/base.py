@@ -28,19 +28,21 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "incidents.infrastructure.config.django_setup.IncidentsConfig",
+    "django_prometheus",
 ]
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "incidents.infrastructure.api.middleware.error_handler.ErrorHandlerMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
 
 ROOT_URLCONF = "incidents.urls"
 WSGI_APPLICATION = "incidents.wsgi.application"
@@ -83,15 +85,10 @@ if JWT_PUBLIC_KEY_PATH and Path(JWT_PUBLIC_KEY_PATH).exists():
     with open(JWT_PUBLIC_KEY_PATH, "r", encoding="utf-8") as key_file:
         JWT_PUBLIC_KEY = key_file.read()
 
-SIMPLE_JWT = {
-    "ALGORITHM": JWT_ALGORITHM,
-    "VERIFYING_KEY": JWT_PUBLIC_KEY,
-}
-
 # REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "incidents.infrastructure.api.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -106,6 +103,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Documentación OpenAPI del servicio de incidentes de FleetOps.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
     "COMPONENT_SPLIT_REQUEST": True,
     "SERVERS": [
         {
