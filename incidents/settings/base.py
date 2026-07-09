@@ -111,6 +111,16 @@ SPECTACULAR_SETTINGS = {
             "description": "FleetOps Incidents API",
         }
     ],
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
+    "SECURITY": [{"bearerAuth": []}],
 }
 
 # Logging
