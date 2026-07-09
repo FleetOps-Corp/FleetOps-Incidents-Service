@@ -6,7 +6,9 @@ from unittest.mock import Mock
 import pytest
 
 from incidents.application.dtos import IncidentDTO
+from incidents.application.exceptions import VehicleValidationError
 from incidents.application.use_cases import RegisterIncidentUseCase
+from incidents.domain.exceptions import VehicleNotRegisteredException
 from incidents.domain.models import Incident
 from incidents.domain.ports import MessagePublisherPort
 
@@ -132,11 +134,13 @@ class TestRegisterIncidentE2E:
         mock_vehicle_client = e2e_setup["mock_vehicle_client"]
 
         # Vehicle validation fails
-        mock_vehicle_client.validate_plate_exists.return_value = False
+        mock_vehicle_client.validate_plate_exists.side_effect = (
+            VehicleNotRegisteredException("Plate not registered")
+        )
 
         incident_dto = IncidentDTO(
             driver_id="c1",
-            vehicle_id="FAKE-9999",
+            vehicle_id="FAKE-999",
             incident_type="HUMANO",
             severity="GRAVE",
             description="Me corte la mano",
@@ -144,8 +148,6 @@ class TestRegisterIncidentE2E:
         )
 
         # Act & Assert
-        from incidents.application.exceptions import VehicleValidationError
-
         with pytest.raises(VehicleValidationError):
             use_case.execute(incident_dto, authorization="Bearer token")
 
