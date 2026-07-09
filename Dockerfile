@@ -40,10 +40,7 @@ COPY --from=builder /build/wheels /wheels
 RUN pip install --no-cache /wheels/*
 
 # Copy application code
-COPY . .
-
-# Set ownership to non-root user
-RUN chown -R incidents:incidents /app
+COPY --chown=incidents:incidents . .
 
 # Switch to non-root user
 USER incidents

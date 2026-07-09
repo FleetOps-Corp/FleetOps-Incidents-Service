@@ -124,5 +124,5 @@ class TestSettingsModules:
         assert wsgi_module.application is stub_application
         assert (
             importlib.import_module("os").environ["DJANGO_SETTINGS_MODULE"]
-            == "incidents.settings.base"
+            == "incidents.settings.test"
         )

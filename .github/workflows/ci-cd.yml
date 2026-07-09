@@ -97,7 +97,7 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # solo en main
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v4
@@ -124,7 +124,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
+          command_timeout: 20m
+          debug: true
           script: |
-            cd /home/ubuntu/incidentes-servicio
-            docker compose pull incidentes
-            docker compose up -d incidentes
+            docker compose pull
+            docker compose up -d
