@@ -250,6 +250,7 @@ Run the main quality checks with:
 
 ```bash
 mypy .
+mypy incidents
 ruff check .
 black --check .
 pytest
