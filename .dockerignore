@@ -36,6 +36,9 @@ LICENSE
 venv/
 env/
 
+# Secrets and local credentials
+secrets/
+
 # Logs
 *.log
 

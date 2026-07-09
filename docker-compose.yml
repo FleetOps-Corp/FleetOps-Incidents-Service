@@ -19,8 +19,7 @@ services:
     networks:
       - incidents-network
 
-  incidents-service:
-    # ← CAMBIO: usar imagen de Docker Hub, no construir localmente
+  incidents:
     image: julianamlb/incidentes:latest
     container_name: incidentes-servicio
     environment:
@@ -39,13 +38,11 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public.pem
     ports:
-      - "8000:8000"
+      - "8080:8000"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      # ← ELIMINAR: no montes el código en producción
-      # Solo monta el secreto JWT
       - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
