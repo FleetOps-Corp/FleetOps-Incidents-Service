@@ -128,6 +128,6 @@ jobs:
           timeout: 60s
           command_timeout: 20m
           debug: true
-          script:
+          script: |
             docker compose pull
             docker compose up -d
