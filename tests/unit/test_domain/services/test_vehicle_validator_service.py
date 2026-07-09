@@ -17,9 +17,13 @@ class TestVehicleValidatorService:
         mock_vehicle_client.validate_plate_exists.return_value = True
 
         # Act & Assert (no exception)
-        vehicle_validator_service.validate_vehicle_exists(placa, authorization="Bearer token")
+        vehicle_validator_service.validate_vehicle_exists(
+            placa, authorization="Bearer token"
+        )
 
-        mock_vehicle_client.validate_plate_exists.assert_called_once_with(placa=placa, authorization="Bearer token")
+        mock_vehicle_client.validate_plate_exists.assert_called_once_with(
+            placa=placa, authorization="Bearer token"
+        )
 
     def test_validate_vehicle_not_exists(
         self, vehicle_validator_service, mock_vehicle_client
@@ -31,7 +35,9 @@ class TestVehicleValidatorService:
 
         # Act & Assert
         with pytest.raises(VehicleNotRegisteredException) as exc_info:
-            vehicle_validator_service.validate_vehicle_exists(placa, authorization="Bearer token")
+            vehicle_validator_service.validate_vehicle_exists(
+                placa, authorization="Bearer token"
+            )
 
         assert "not registered" in str(exc_info.value.message)
 
@@ -47,4 +53,6 @@ class TestVehicleValidatorService:
 
         # Act & Assert
         with pytest.raises(VehicleNotRegisteredException):
-            vehicle_validator_service.validate_vehicle_exists(placa, authorization="Bearer token")
+            vehicle_validator_service.validate_vehicle_exists(
+                placa, authorization="Bearer token"
+            )

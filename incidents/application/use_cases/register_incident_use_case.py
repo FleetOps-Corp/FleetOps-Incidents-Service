@@ -62,7 +62,9 @@ class RegisterIncidentUseCase:
         """
         # Step 1: Validate vehicle exists (Circuit Breaker protected)
         try:
-            self.vehicle_validator.validate_vehicle_exists(dto.vehicle_id, authorization)
+            self.vehicle_validator.validate_vehicle_exists(
+                dto.vehicle_id, authorization
+            )
         except VehicleNotRegisteredException as e:
             raise VehicleValidationError(str(e))
 

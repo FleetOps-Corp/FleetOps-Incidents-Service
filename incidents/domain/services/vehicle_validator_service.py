@@ -34,7 +34,9 @@ class VehicleValidatorService:
             VehicleNotRegisteredException: If plate is not registered or validation fails
         """
         try:
-            is_valid = self.vehicle_client.validate_plate_exists(placa=placa, authorization=authorization)
+            is_valid = self.vehicle_client.validate_plate_exists(
+                placa=placa, authorization=authorization
+            )
             if not is_valid:
                 raise VehicleNotRegisteredException(
                     f"Plate '{placa}' is not registered in the system."

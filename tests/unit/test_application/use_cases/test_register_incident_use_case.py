@@ -42,7 +42,10 @@ class TestRegisterIncidentUseCase:
 
         result = use_case.execute(dto, authorization="Bearer token")
 
-        vehicle_validator.validate_vehicle_exists.assert_called_once_with("ABC-124", "Bearer token",)
+        vehicle_validator.validate_vehicle_exists.assert_called_once_with(
+            "ABC-124",
+            "Bearer token",
+        )
         incident_service.register_incident.assert_called_once()
         assert result.incident_id == "INC-20260601-abcd"
         assert result.vehicle_id == "ABC-124"

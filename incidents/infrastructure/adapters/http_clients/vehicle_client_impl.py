@@ -67,7 +67,9 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         """
         try:
             # Call through circuit breaker
-            result = self.breaker.call(self._make_validation_request, placa, authorization)
+            result = self.breaker.call(
+                self._make_validation_request, placa, authorization
+            )
             return result
         except Exception as e:
             logging.exception(f"Vehicles API call failed for plate {placa}: {str(e)}")
@@ -109,10 +111,10 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             Exception: On HTTP error
         """
         normalized_plate = placa.replace("-", "").replace(" ", "").upper()
-        
+
         # Construct endpoint
         url = f"{self.vehicles_api_url}/vehiculos/placa/{normalized_plate}"
-        
+
         headers = {
             "Authorization": authorization,
         }

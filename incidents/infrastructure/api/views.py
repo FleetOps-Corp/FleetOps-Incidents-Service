@@ -104,7 +104,7 @@ def create_incident(request: Request) -> Response:
         )
 
         authorization = request.headers.get("Authorization")
-        
+
         # Execute use case
         if register_incident_uc is None:
             raise RuntimeError(use_case_not_registered)

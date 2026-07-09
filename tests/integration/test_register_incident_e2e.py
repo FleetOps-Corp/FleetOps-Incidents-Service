@@ -50,7 +50,10 @@ class TestRegisterIncidentE2E:
         vehicle_validator = VehicleValidatorService(mock_vehicle_client)
 
         # Application use case
-        use_case = RegisterIncidentUseCase(incident_service, vehicle_validator, )
+        use_case = RegisterIncidentUseCase(
+            incident_service,
+            vehicle_validator,
+        )
 
         return {
             "use_case": use_case,
@@ -106,7 +109,10 @@ class TestRegisterIncidentE2E:
         assert response_dto.incident_id.startswith("INC-")
 
         # Assert Layer 2: Domain
-        mock_vehicle_client.validate_plate_exists.assert_called_once_with(placa="ABC-123", authorization="Bearer token",)
+        mock_vehicle_client.validate_plate_exists.assert_called_once_with(
+            placa="ABC-123",
+            authorization="Bearer token",
+        )
 
         # Assert Layer 3: Persistence
         mock_repo.save.assert_called_once()
