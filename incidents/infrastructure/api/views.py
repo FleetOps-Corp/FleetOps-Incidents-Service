@@ -62,21 +62,21 @@ def create_incident(request: Request) -> Response:
     The request payload is validated and converted into an IncidentDTO.
     The corresponding application use case is executed to register the incident.
 
-    Primary transactional flow exercising all architectural layers:
-    1. API Gateway validates JWT token
-    2. Django REST Framework deserializes request
-    3. Application use case validates vehicle (Circuit Breaker)
-    4. Domain service creates incident aggregate
-    5. Repository persists to PostgreSQL
-    6. Message broker publishes event for SAGA coordination
-    7. Response returned to client
+    Primary request flow:
+    1. Authentication is verified before accessing the endpoint.
+    2. Django REST Framework validates and deserializes the request payload.
+    3. The request data is converted into an IncidentDTO.
+    4. The application use case processes the business logic.
+    5. The incident is persisted through the configured repository.
+    6. A successful response is returned to the client.
 
     Args:
-        request: HTTP request with incident data
+        request: HTTP request containing incident data.
 
     Returns:
-        Response: HTTP 201 with incident data or error
-
+        Response:
+        - HTTP 201: Incident successfully created.
+        
     """
     try:
         # Deserialize request
