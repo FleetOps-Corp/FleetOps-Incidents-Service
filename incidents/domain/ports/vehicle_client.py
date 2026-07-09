@@ -16,7 +16,7 @@ class VehicleClientPort(ABC):
     """
 
     @abstractmethod
-    def validate_plate_exists(self, placa: str) -> bool:
+    def validate_plate_exists(self, placa: str, authorization: str) -> bool:
         """
         Verify that a vehicle plate is registered in the system.
 

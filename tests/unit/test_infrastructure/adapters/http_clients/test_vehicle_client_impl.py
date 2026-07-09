@@ -34,7 +34,7 @@ class TestVehicleClientWithCircuitBreaker:
         mock_get.return_value = mock_response
 
         # Act
-        result = client.validate_plate_exists("ABC-1234")
+        result = client.validate_plate_exists("ABC-134", "Bearer token")
 
         # Assert
         assert result is True
@@ -48,7 +48,7 @@ class TestVehicleClientWithCircuitBreaker:
         mock_response.status_code = 404
         mock_get.return_value = mock_response
 
-        result = client.validate_plate_exists("FAKE-9999")
+        result = client.validate_plate_exists("FAKE-999", "Bearer token")
 
         assert result is False
 
@@ -60,7 +60,7 @@ class TestVehicleClientWithCircuitBreaker:
             mock_get.side_effect = Exception("Connection refused")
 
             with pytest.raises(VehicleNotRegisteredException):
-                client.validate_plate_exists("ABC-1234")
+                client.validate_plate_exists("ABC-124", "Bearer token")
 
     @patch(
         "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
@@ -68,12 +68,12 @@ class TestVehicleClientWithCircuitBreaker:
     def test_get_vehicle_details_success(self, mock_get, client):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"plate": "ABC-1234"}
+        mock_response.json.return_value = {"plate": "ABC-124"}
         mock_get.return_value = mock_response
 
-        result = client.get_vehicle_details("ABC-1234")
+        result = client.get_vehicle_details("ABC-124")
 
-        assert result == {"plate": "ABC-1234"}
+        assert result == {"plate": "ABC-124"}
 
     @patch(
         "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
@@ -83,7 +83,7 @@ class TestVehicleClientWithCircuitBreaker:
         mock_response.status_code = 404
         mock_get.return_value = mock_response
 
-        result = client.get_vehicle_details("ABC-1234")
+        result = client.get_vehicle_details("ABC-124")
 
         assert result is None
 
@@ -93,7 +93,7 @@ class TestVehicleClientWithCircuitBreaker:
     def test_get_vehicle_details_exception_returns_none(self, mock_get, client):
         mock_get.side_effect = Exception("Connection refused")
 
-        result = client.get_vehicle_details("ABC-1234")
+        result = client.get_vehicle_details("ABC-124")
 
         assert result is None
 

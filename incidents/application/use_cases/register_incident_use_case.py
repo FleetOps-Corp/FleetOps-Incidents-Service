@@ -46,7 +46,7 @@ class RegisterIncidentUseCase:
         self.incident_service = incident_service
         self.vehicle_validator = vehicle_validator
 
-    def execute(self, dto: IncidentDTO) -> IncidentResponseDTO:
+    def execute(self, dto: IncidentDTO, authorization: str) -> IncidentResponseDTO:
         """
         Execute incident registration workflow.
 
@@ -62,7 +62,9 @@ class RegisterIncidentUseCase:
         """
         # Step 1: Validate vehicle exists (Circuit Breaker protected)
         try:
-            self.vehicle_validator.validate_vehicle_exists(dto.vehicle_id)
+            self.vehicle_validator.validate_vehicle_exists(
+                dto.vehicle_id, authorization
+            )
         except VehicleNotRegisteredException as e:
             raise VehicleValidationError(str(e))
 

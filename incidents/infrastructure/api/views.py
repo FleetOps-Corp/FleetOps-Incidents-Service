@@ -103,11 +103,13 @@ def create_incident(request: Request) -> Response:
             event_date=serializer.validated_data.get("event_date"),
         )
 
+        authorization = request.headers.get("Authorization")
+
         # Execute use case
         if register_incident_uc is None:
             raise RuntimeError(use_case_not_registered)
 
-        response_dto = register_incident_uc.execute(incident_dto)
+        response_dto = register_incident_uc.execute(incident_dto, authorization)
 
         # Serialize response
         response_serializer = IncidentResponseSerializer(response_dto.to_dict())
