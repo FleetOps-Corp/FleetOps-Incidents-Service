@@ -128,7 +128,6 @@ jobs:
           timeout: 60s
           command_timeout: 20m
           debug: true
-          script: |
-            cd /home/ubuntu/incidentes-servicio
-            docker compose pull incidentes-servicio
-            docker compose up -d incidentes-servicio
+          script:
+            docker compose pull
+            docker compose up -d

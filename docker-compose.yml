@@ -52,7 +52,6 @@ services:
       start_period: 40s
     networks:
       - incidents-network
-    # ← CAMBIO: usar Gunicorn en lugar de runserver
     command: gunicorn --bind 0.0.0.0:8000 --workers 4 incidents.wsgi:application
 
 volumes:
