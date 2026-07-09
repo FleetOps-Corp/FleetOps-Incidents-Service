@@ -4,7 +4,11 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from incidents.domain.exceptions import VehicleNotRegisteredException
+from incidents.domain.exceptions import (
+    VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 from incidents.infrastructure.adapters.http_clients.vehicle_client_impl import (
     VehicleClientWithCircuitBreaker,
 )
@@ -43,24 +47,59 @@ class TestVehicleClientWithCircuitBreaker:
         "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
     )
     def test_validate_plate_not_found(self, mock_get, client):
-        """Given: Nonexistent plate, When: Validate, Then: Return False."""
+        """Given: Nonexistent plate, When: Validate, Then: Raise VehicleNotRegisteredException."""
         mock_response = Mock()
         mock_response.status_code = 404
         mock_get.return_value = mock_response
 
-        result = client.validate_plate_exists("FAKE-999", "Bearer token")
-
-        assert result is False
+        with pytest.raises(VehicleNotRegisteredException):
+            client.validate_plate_exists("FAKE-999", "Bearer token")
 
     def test_validate_plate_connection_error(self, client):
-        """Given: Connection error, When: Validate, Then: Raise VehicleNotRegisteredException."""
+        """Given: Connection error, When: Validate, Then: Raise VehicleServiceUnavailableException."""
         with patch(
             "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
         ) as mock_get:
             mock_get.side_effect = Exception("Connection refused")
 
-            with pytest.raises(VehicleNotRegisteredException):
+            with pytest.raises(VehicleServiceUnavailableException):
                 client.validate_plate_exists("ABC-124", "Bearer token")
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_validate_plate_auth_error_401(self, mock_get, client):
+        """Given: Auth error (401), When: Validate, Then: Raise VehicleServiceAuthenticationException."""
+        mock_response = Mock()
+        mock_response.status_code = 401
+        mock_get.return_value = mock_response
+
+        with pytest.raises(VehicleServiceAuthenticationException):
+            client.validate_plate_exists("ABC-124", "invalid-token")
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_validate_plate_auth_error_403(self, mock_get, client):
+        """Given: Auth error (403), When: Validate, Then: Raise VehicleServiceAuthenticationException."""
+        mock_response = Mock()
+        mock_response.status_code = 403
+        mock_get.return_value = mock_response
+
+        with pytest.raises(VehicleServiceAuthenticationException):
+            client.validate_plate_exists("ABC-124", "token-no-permission")
+
+    @patch(
+        "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"
+    )
+    def test_validate_plate_server_error(self, mock_get, client):
+        """Given: Server error (500), When: Validate, Then: Raise VehicleServiceUnavailableException."""
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_get.return_value = mock_response
+
+        with pytest.raises(VehicleServiceUnavailableException):
+            client.validate_plate_exists("ABC-124", "Bearer token")
 
     @patch(
         "incidents.infrastructure.adapters.http_clients.vehicle_client_impl.requests.get"

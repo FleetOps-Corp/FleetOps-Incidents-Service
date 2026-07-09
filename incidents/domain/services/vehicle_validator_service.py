@@ -1,6 +1,10 @@
 """Vehicle Validator Service - Validates vehicle registration before incident creation."""
 
-from incidents.domain.exceptions import VehicleNotRegisteredException
+from incidents.domain.exceptions import (
+    VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 from incidents.domain.ports import VehicleClientPort
 
 
@@ -29,22 +33,26 @@ class VehicleValidatorService:
 
         Args:
             placa: Vehicle plate number
+            authorization: Authorization header value
 
         Raises:
-            VehicleNotRegisteredException: If plate is not registered or validation fails
+            VehicleNotRegisteredException: If plate is not registered
+            VehicleServiceAuthenticationException: If auth fails validating vehicle
+            VehicleServiceUnavailableException: If vehicle service unavailable
         """
         try:
-            is_valid = self.vehicle_client.validate_plate_exists(
+            self.vehicle_client.validate_plate_exists(
                 placa=placa, authorization=authorization
             )
-            if not is_valid:
-                raise VehicleNotRegisteredException(
-                    f"Plate '{placa}' is not registered in the system."
-                )
+        except (
+            VehicleNotRegisteredException,
+            VehicleServiceAuthenticationException,
+            VehicleServiceUnavailableException,
+        ):
+            # Domain exceptions propagate as-is
+            raise
         except Exception as e:
-            # Circuit breaker or network error
-            if isinstance(e, VehicleNotRegisteredException):
-                raise
-            raise VehicleNotRegisteredException(
+            # Unexpected errors from circuit breaker or network
+            raise VehicleServiceUnavailableException(
                 f"Failed to validate plate '{placa}': {str(e)}"
             )

@@ -12,7 +12,11 @@ from incidents.application.exceptions import (
     ApplicationException,
     VehicleValidationError,
 )
-from incidents.domain.exceptions import DomainException
+from incidents.domain.exceptions import (
+    DomainException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 from incidents.infrastructure.api import views
 
 
@@ -121,6 +125,50 @@ class TestCreateIncidentView:
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.data["code"] == "VEHICLE_NOT_REGISTERED"
+
+    def test_create_incident_vehicle_auth_error(self, factory, user):
+        """Given: Vehicle service auth error, When: POST, Then: Return 401."""
+        request_data = {
+            "driver_id": "conductor-123",
+            "vehicle_id": "ABC-1234",
+            "incident_type": "MECANICO",
+            "severity": "GRAVE",
+            "description": "Engine failure",
+            "event_date": "2026-06-10T14:30:00Z",
+        }
+
+        views.register_incident_uc.execute.side_effect = (
+            VehicleServiceAuthenticationException("Auth failed")
+        )
+        request = factory.post("/api/incidents/", request_data, format="json")
+        force_authenticate(request, user=user)
+
+        response = views.create_incident(request)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.data["code"] == "VEHICLE_SERVICE_AUTH_ERROR"
+
+    def test_create_incident_vehicle_service_unavailable(self, factory, user):
+        """Given: Vehicle service unavailable, When: POST, Then: Return 503."""
+        request_data = {
+            "driver_id": "conductor-123",
+            "vehicle_id": "ABC-1234",
+            "incident_type": "MECANICO",
+            "severity": "GRAVE",
+            "description": "Engine failure",
+            "event_date": "2026-06-10T14:30:00Z",
+        }
+
+        views.register_incident_uc.execute.side_effect = (
+            VehicleServiceUnavailableException("Service down")
+        )
+        request = factory.post("/api/incidents/", request_data, format="json")
+        force_authenticate(request, user=user)
+
+        response = views.create_incident(request)
+
+        assert response.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
+        assert response.data["code"] == "VEHICLE_SERVICE_UNAVAILABLE"
 
     def test_create_incident_domain_exception(self, factory, user):
         request_data = {

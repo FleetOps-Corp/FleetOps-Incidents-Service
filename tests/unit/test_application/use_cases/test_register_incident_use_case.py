@@ -9,7 +9,12 @@ import pytest
 from incidents.application.dtos import IncidentDTO
 from incidents.application.exceptions import VehicleValidationError
 from incidents.application.use_cases import RegisterIncidentUseCase
-from incidents.domain.exceptions import DomainException, VehicleNotRegisteredException
+from incidents.domain.exceptions import (
+    DomainException,
+    VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 
 
 class TestRegisterIncidentUseCase:
@@ -90,3 +95,49 @@ class TestRegisterIncidentUseCase:
 
         with pytest.raises(DomainException):
             use_case.execute(dto, authorization="Bearer token")
+
+    def test_execute_vehicle_auth_error_propagates(self):
+        """Given: Vehicle service auth error, When: Execute, Then: Propagate VehicleServiceAuthenticationException."""
+        incident_service = Mock()
+        vehicle_validator = Mock()
+        vehicle_validator.validate_vehicle_exists.side_effect = (
+            VehicleServiceAuthenticationException("Auth failed")
+        )
+        use_case = RegisterIncidentUseCase(incident_service, vehicle_validator)
+
+        dto = IncidentDTO(
+            driver_id="driver-1",
+            vehicle_id="ABC-124",
+            incident_type="HUMANO",
+            severity="GRAVE",
+            description="Desc",
+            event_date=datetime(2026, 6, 1, 10, 30, 0),
+        )
+
+        with pytest.raises(VehicleServiceAuthenticationException):
+            use_case.execute(dto, authorization="invalid-token")
+
+        incident_service.register_incident.assert_not_called()
+
+    def test_execute_vehicle_service_unavailable_propagates(self):
+        """Given: Vehicle service unavailable, When: Execute, Then: Propagate VehicleServiceUnavailableException."""
+        incident_service = Mock()
+        vehicle_validator = Mock()
+        vehicle_validator.validate_vehicle_exists.side_effect = (
+            VehicleServiceUnavailableException("Service down")
+        )
+        use_case = RegisterIncidentUseCase(incident_service, vehicle_validator)
+
+        dto = IncidentDTO(
+            driver_id="driver-1",
+            vehicle_id="ABC-124",
+            incident_type="HUMANO",
+            severity="GRAVE",
+            description="Desc",
+            event_date=datetime(2026, 6, 1, 10, 30, 0),
+        )
+
+        with pytest.raises(VehicleServiceUnavailableException):
+            use_case.execute(dto, authorization="Bearer token")
+
+        incident_service.register_incident.assert_not_called()
