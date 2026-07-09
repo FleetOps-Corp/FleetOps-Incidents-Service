@@ -27,7 +27,12 @@ class TestCreateIncidentView:
     @pytest.fixture
     def user(self):
         """Authenticated mock user."""
-        return Mock(is_authenticated=True)
+        return SimpleNamespace(
+            is_authenticated=True,
+            role="ADMINISTRADOR",
+            id="user-1",
+            email="test@test.com",
+        )
 
     @pytest.fixture(autouse=True)
     def setup_use_cases(self):
