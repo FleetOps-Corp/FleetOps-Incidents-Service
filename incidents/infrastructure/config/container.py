@@ -29,7 +29,7 @@ class DummyMessagePublisher(MessagePublisherPort):
 
 
 class DummyVehicleClient(VehicleClientPort):
-    def validate_plate_exists(self, placa: str) -> bool:
+    def validate_plate_exists(self, placa: str, authorization: str) -> bool:
         return True
 
     def get_vehicle_details(self, placa: str):

@@ -16,6 +16,7 @@ class HasIncidentAccess(BasePermission):
             "EMPLEADO_MANTENIMIENTO",
             "EMPLEADO_ASIGNACIONES",
             "EMPLEADO_REPORTES",
+            "EMPLEADO_INCIDENTES",
             "ADMINISTRADOR",
         },
         "POST": {
@@ -23,6 +24,7 @@ class HasIncidentAccess(BasePermission):
             "EMPLEADO_MANTENIMIENTO",
             "EMPLEADO_ASIGNACIONES",
             "EMPLEADO_REPORTES",
+            "EMPLEADO_INCIDENTES",
             "ADMINISTRADOR",
         },
     }

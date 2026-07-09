@@ -52,7 +52,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             listeners=[self._breaker_listener()],
         )
 
-    def validate_plate_exists(self, placa: str) -> bool:
+    def validate_plate_exists(self, placa: str, authorization: str) -> bool:
         """
         Verify vehicle plate is registered (Circuit Breaker protected).
 
@@ -67,7 +67,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         """
         try:
             # Call through circuit breaker
-            result = self.breaker.call(self._make_validation_request, placa)
+            result = self.breaker.call(self._make_validation_request, placa, authorization)
             return result
         except Exception as e:
             logging.exception(f"Vehicles API call failed for plate {placa}: {str(e)}")
@@ -95,7 +95,7 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
             logger.warning(f"Failed to get vehicle details for {placa}: {str(e)}")
             return None
 
-    def _make_validation_request(self, placa: str) -> bool:
+    def _make_validation_request(self, placa: str, authorization: str) -> bool:
         """
         Actual HTTP request to Vehicles API.
 
@@ -108,11 +108,16 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         Raises:
             Exception: On HTTP error
         """
+        normalized_plate = placa.replace("-", "").replace(" ", "").upper()
+        
         # Construct endpoint
-        url = f"{self.vehicles_api_url}/vehiculos/placa/{placa}"
-
+        url = f"{self.vehicles_api_url}/vehiculos/placa/{normalized_plate}"
+        
+        headers = {
+            "Authorization": authorization,
+        }
         # Make request
-        response = requests.get(url, timeout=self.timeout_seconds)
+        response = requests.get(url, headers=headers, timeout=self.timeout_seconds)
 
         # Handle responses
         if response.status_code == 200:
