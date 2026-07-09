@@ -16,6 +16,7 @@ from incidents.application.exceptions import (
 )
 from incidents.domain.exceptions import DomainException
 from incidents.infrastructure.adapters.logging import logger_factory
+from incidents.infrastructure.api.permissions import HasIncidentAccess
 from incidents.infrastructure.api.serializers import (
     IncidentQuerySerializer,
     IncidentRequestSerializer,
@@ -52,7 +53,12 @@ def set_use_cases(register_uc, query_uc):
     },
 )
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes(
+    [
+        IsAuthenticated,
+        HasIncidentAccess,
+    ]
+)
 def create_incident(request: Request) -> Response:
     """
     POST /api/incidents/
@@ -149,7 +155,12 @@ def create_incident(request: Request) -> Response:
     },
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes(
+    [
+        IsAuthenticated,
+        HasIncidentAccess,
+    ]
+)
 def query_incidents(request: Request) -> Response:
     """
     GET /api/incidents/
@@ -226,7 +237,12 @@ def query_incidents(request: Request) -> Response:
     },
 )
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes(
+    [
+        IsAuthenticated,
+        HasIncidentAccess,
+    ]
+)
 def get_incident(request: Request, incident_id: str) -> Response:
     """
     GET /api/incidents/{incident_id}/
