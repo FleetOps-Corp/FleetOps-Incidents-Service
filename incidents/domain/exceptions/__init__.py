@@ -7,6 +7,8 @@ from .domain_exceptions import (
     InvalidIncidentTypeException,
     InvalidPlateNumberException,
     VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
 )
 
 __all__ = [
@@ -15,5 +17,7 @@ __all__ = [
     "InvalidIncidentSeverityException",
     "InvalidPlateNumberException",
     "VehicleNotRegisteredException",
+    "VehicleServiceAuthenticationException",
+    "VehicleServiceUnavailableException",
     "IncidentNotFoundError",
 ]
