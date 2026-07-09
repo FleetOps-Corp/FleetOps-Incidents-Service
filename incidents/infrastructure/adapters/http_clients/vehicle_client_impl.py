@@ -6,7 +6,11 @@ from typing import Any, Dict, Optional
 import requests
 from pybreaker import CircuitBreaker
 
-from incidents.domain.exceptions import VehicleNotRegisteredException
+from incidents.domain.exceptions import (
+    VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 from incidents.domain.ports import VehicleClientPort
 from incidents.infrastructure.adapters.logging import logger_factory
 
@@ -58,12 +62,15 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
 
         Args:
             placa: Vehicle plate to validate
+            authorization: Authorization header value
 
         Returns:
             bool: True if plate exists
 
         Raises:
-            VehicleNotRegisteredException: If validation fails or service down
+            VehicleNotRegisteredException: If plate is not registered
+            VehicleServiceAuthenticationException: If auth fails (401/403)
+            VehicleServiceUnavailableException: If service unavailable (5xx)
         """
         try:
             # Call through circuit breaker
@@ -71,10 +78,17 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
                 self._make_validation_request, placa, authorization
             )
             return result
+        except (
+            VehicleNotRegisteredException,
+            VehicleServiceAuthenticationException,
+            VehicleServiceUnavailableException,
+        ):
+            # Re-raise domain exceptions as-is
+            raise
         except Exception as e:
             logging.exception(f"Vehicles API call failed for plate {placa}: {str(e)}")
-            raise VehicleNotRegisteredException(
-                f"Failed to validate plate {placa}: {str(e)}"
+            raise VehicleServiceUnavailableException(
+                f"Unexpected error validating plate {placa}: {str(e)}"
             )
 
     def get_vehicle_details(self, placa: str) -> Optional[Dict[str, Any]]:
@@ -103,12 +117,15 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
 
         Args:
             placa: Vehicle plate
+            authorization: Authorization header value
 
         Returns:
             bool: True if plate exists
 
         Raises:
-            Exception: On HTTP error
+            VehicleNotRegisteredException: If plate not found (404)
+            VehicleServiceAuthenticationException: If auth fails (401/403)
+            VehicleServiceUnavailableException: If service error (5xx)
         """
         normalized_plate = placa.replace("-", "").replace(" ", "").upper()
 
@@ -121,16 +138,32 @@ class VehicleClientWithCircuitBreaker(VehicleClientPort):
         # Make request
         response = requests.get(url, headers=headers, timeout=self.timeout_seconds)
 
-        # Handle responses
+        # Handle successful response
         if response.status_code == 200:
-            # Plate is registered
             return True
-        elif response.status_code == 404:
-            # Plate not found
-            return False
 
-        response.raise_for_status()
-        raise RuntimeError("Unreachable")
+        # Handle plate not found
+        if response.status_code == 404:
+            raise VehicleNotRegisteredException(
+                f"Vehicle plate {placa} is not registered"
+            )
+
+        # Handle authentication/authorization errors
+        if response.status_code in (401, 403):
+            raise VehicleServiceAuthenticationException(
+                f"Authentication failed calling Vehicles API: {response.status_code}"
+            )
+
+        # Handle server errors
+        if 500 <= response.status_code < 600:
+            raise VehicleServiceUnavailableException(
+                f"Vehicles API server error: {response.status_code}"
+            )
+
+        # Handle other client errors
+        raise VehicleServiceUnavailableException(
+            f"Vehicles API returned error: {response.status_code}"
+        )
 
     @staticmethod
     def _breaker_listener():

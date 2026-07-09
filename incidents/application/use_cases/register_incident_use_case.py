@@ -7,6 +7,8 @@ from incidents.application.exceptions import VehicleValidationError
 from incidents.domain.exceptions import (
     DomainException,
     VehicleNotRegisteredException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
 )
 from incidents.domain.models import Incident
 from incidents.domain.services import IncidentService, VehicleValidatorService
@@ -52,12 +54,15 @@ class RegisterIncidentUseCase:
 
         Args:
             dto: IncidentDTO with incident data from REST request
+            authorization: Authorization header value
 
         Returns:
             IncidentResponseDTO with registered incident data
 
         Raises:
             VehicleValidationError: If plate is not registered
+            VehicleServiceAuthenticationException: If auth fails validating vehicle
+            VehicleServiceUnavailableException: If vehicle service unavailable
             DomainException: If incident data is invalid
         """
         # Step 1: Validate vehicle exists (Circuit Breaker protected)
@@ -67,6 +72,12 @@ class RegisterIncidentUseCase:
             )
         except VehicleNotRegisteredException as e:
             raise VehicleValidationError(str(e))
+        except (
+            VehicleServiceAuthenticationException,
+            VehicleServiceUnavailableException,
+        ):
+            # Re-raise upstream service errors to be handled at API layer
+            raise
 
         # Step 2: Register incident (domain logic, event publishing)
         try:

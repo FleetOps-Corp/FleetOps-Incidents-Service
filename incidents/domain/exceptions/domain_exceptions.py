@@ -40,3 +40,15 @@ class IncidentNotFoundError(DomainException):
     """Raised when an incident cannot be found by its ID."""
 
     pass
+
+
+class VehicleServiceAuthenticationException(DomainException):
+    """Raised when Vehicles API returns authentication/authorization error (401/403)."""
+
+    pass
+
+
+class VehicleServiceUnavailableException(DomainException):
+    """Raised when Vehicles API is unavailable or returns server error (5xx)."""
+
+    pass

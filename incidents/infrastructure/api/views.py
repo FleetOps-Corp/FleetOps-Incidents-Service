@@ -14,7 +14,11 @@ from incidents.application.exceptions import (
     ApplicationException,
     VehicleValidationError,
 )
-from incidents.domain.exceptions import DomainException
+from incidents.domain.exceptions import (
+    DomainException,
+    VehicleServiceAuthenticationException,
+    VehicleServiceUnavailableException,
+)
 from incidents.infrastructure.adapters.logging import logger_factory
 from incidents.infrastructure.api.permissions import HasIncidentAccess
 from incidents.infrastructure.api.serializers import (
@@ -48,7 +52,9 @@ def set_use_cases(register_uc, query_uc):
     responses={
         201: IncidentResponseSerializer,
         400: OpenApiResponse(description="Datos inválidos"),
+        401: OpenApiResponse(description="Error de autenticación con el servicio de vehículos"),
         422: OpenApiResponse(description="El vehículo no está registrado"),
+        503: OpenApiResponse(description="Servicio de vehículos no disponible"),
         500: OpenApiResponse(description="Error interno del servidor"),
     },
 )
@@ -116,6 +122,20 @@ def create_incident(request: Request) -> Response:
 
         logger.info(f"Incident created: {response_dto.incident_id}")
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    except VehicleServiceAuthenticationException as e:
+        logger.warning(f"Vehicle service authentication error: {str(e)}")
+        return Response(
+            {"error": str(e), "code": "VEHICLE_SERVICE_AUTH_ERROR"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    except VehicleServiceUnavailableException as e:
+        logger.warning(f"Vehicle service unavailable: {str(e)}")
+        return Response(
+            {"error": str(e), "code": "VEHICLE_SERVICE_UNAVAILABLE"},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
 
     except VehicleValidationError as e:
         logger.warning(f"Vehicle validation error: {str(e)}")
